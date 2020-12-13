@@ -1,130 +1,146 @@
-import sys
+import tempfile
 
-import ply.lex as lex
+from Source import Source
+from Token import TokenType, Token, Characters
+import io
 
+class Lexer:
 
-class Lexer(object):
-    if len(sys.argv) == 2:
-        filePath = sys.argv[1]
-    else:
-        filePath = "/Users/maciekpaszylka/Desktop/test.txt"
+    def __init__(self, filename):
+        self.source = Source(filename)
+        self.token = Token()
 
-    # List of token names.   This is always required
-    def __init__(self):
-        self.data =[]
-        self._tokens=[]
+    def skipWhitespace(self):
+        while self.source.getCurrentChar() == " " or self.source.getCurrentChar() == "\n":
+            self.source.nextChar()
 
-    tokens = (
-        'NUMBER',
-        'STRING',
-        'NAME',
-        'PLUS',
-        'MINUS',
-        'MULTIPLY',
-        'DIVIDE',
-        'ASSIGN',
-        'EQUALS',
-        'NOTEQUAL',
-        'GREATEROREQUAL',
-        'LESSOREQUAL',
-        'GREATER',
-        'LESS',
-        'AND',
-        'OR',
-        'LEFTBRACKET',
-        'RIGHTBRACKET',
-        'LEFTPARENTHESIS',
-        'RIGHTPRAENTHESIS',
-        'LEFTCURLY',
-        'RIGHTCURLY',
-        'COMMA',
-        'EOL'
+    def readName(self):
+        currentChar = self.source.getCurrentChar()
+        name = ""
+        if currentChar.isalpha():
+            while currentChar.isalpha() or currentChar.isdigit():
+                name+=currentChar
+                currentChar = self.source.nextChar()
+        return name
 
-    )
-
-    # Regular expression rules for simple tokens
-    t_STRING = r'\".*?\"'
-    t_PLUS = r'\+'
-    t_MINUS = r'\-'
-    t_MULTIPLY = r'\*'
-    t_DIVIDE = r'\/'
-    t_ASSIGN = r'\='
-    t_EQUALS = r'\=='
-    t_NOTEQUAL = r'\!='
-    t_GREATEROREQUAL = r'\>='
-    t_LESSOREQUAL = r'\<='
-    t_GREATER = r'\>'
-    t_LESS = r'\<'
-    t_AND = r'\&'
-    t_OR = r'\|'
-    t_LEFTBRACKET = r'\['
-    t_RIGHTBRACKET = r'\]'
-    t_LEFTPARENTHESIS = r'\('
-    t_RIGHTPRAENTHESIS = r'\)'
-    t_LEFTCURLY = r'\{'
-    t_RIGHTCURLY = r'\}'
-    t_COMMA = r'\,'
-    t_EOL = r'\;'
-
-    keywords = {
-
-        'def': 'DEF',
-        'print': 'PRINT',
-        'var': 'VAR',
-        'while': "WHILE",
-        'if': "IF",
-        'else': 'ELSE'
-    }
-
-    tokens += tuple(keywords.values())
-
-    def t_NUMBER(self, t):
-        r'(\d+(?:\.\d+)?)'
-        t.value = float(t.value)
-        return t
-
-    def t_NAME(self, t):
-        r'[a-zA-Z_][a-zA-Z_0-9]*'
-        t.type = self.keywords.get(t.value, 'NAME')
-        return t
-
-    def t_newline(self, t):
-        r'\n+'
-        t.lexer.lineno += len(t.value)
-
-    t_ignore = ' \t'
-
-    def t_error(self, t):
-        print("Illegal character '%s'" % t.value[0])
-        t.lexer.skip(1)
-
-    def build(self, **kwargs):
-        self.lexer = lex.lex(module=self, **kwargs)
-
-    def tokenize_input(self, filePath):
-        filePath = self.filePath
-        with open(filePath, 'r') as f:
-            self.data = f.readlines()
-        for line in self.data:
-            for c in line.split():
-                self.tokenize(c)
-        return self._tokens
+    def readString(self):
+        currentChar = self.source.getCurrentChar()
+        buffer = ""
+        if currentChar == '"':
+            currentChar= self.source.nextChar()
+            while currentChar != '"':
+                if currentChar == '':
+                    print("Unterminated string")
+                    break
+                else:
+                    buffer+=currentChar
+                    currentChar = self.source.nextChar()
+        return buffer
 
 
-    def tokenize(self, data):
+    def checkText(self):
+        text = self.readString()
+        if text != "":
+            self.token = Token(TokenType.TEXT, text)
+            self.source.nextChar()
+            return True
+        return False
 
-        self.lexer.input(data)
-        while True:
-            tok = self.lexer.token()
-            if not tok:
-                break;
-            self._tokens.append(tok)
-            return tok
+    def readNumber(self):
+        currentChar = self.source.getCurrentChar()
+        number = ""
+
+        if currentChar == '0':
+            number += currentChar
+            currentChar = self.source.nextChar()
+
+        elif currentChar.isdigit() and currentChar != 0:
+            while currentChar.isdigit() or currentChar =='.':
+
+                number+= currentChar
+                currentChar = self.source.nextChar()
+        return number
+
+    def checkCharacter(self):
+        currentChar = self.source.getCurrentChar()
+        if currentChar in Characters.characters:
+            tokenType = Characters.characters[currentChar]
+            self.token = Token(tokenType, currentChar)
+            self.source.nextChar()
+            return True
+        return False
+
+    def checkIfDoubleOperator(self):
+        currentChar = self.source.getCurrentChar()
+        operators = ""
+        if currentChar == '>' or currentChar== '<' or currentChar == '=' or currentChar =='!':
+            operators += currentChar
+            currentChar = self.source.nextChar()
+            if(operators+currentChar) in Characters.doubleOperators:
+                tokenType = Characters.doubleOperators[operators+currentChar]
+                self.token = Token(tokenType, operators+currentChar)
+                self.source.nextChar()
+                return True
+            elif operators in Characters.characters:
+                tokenType = Characters.characters[operators]
+                self.token = Token(tokenType, operators)
+                self.source.nextChar()
+                return True
+        return False
+
+    def checkIfKeyword(self):
+        keyword = self.readName()
+        if keyword in Characters.keywords:
+            token_type = Characters.keywords[keyword]
+            self.token = Token(token_type, keyword)
+            return True
+        elif keyword != "":
+            self.token = Token(TokenType.NAME, keyword)
+            return True
+        return False
+
+    def checkIfNumber(self):
+        number = self.readNumber()
+        if number != "":
+            self.token = Token(TokenType.NUMBER, number)
+            return True
+        return False
+
+    def checkIfEof(self):
+        currentChar = self.source.getCurrentChar()
+        if currentChar == "":
+            self.token = Token(TokenType.EOL, None)
+            return True
+        return False
 
 
-m = Lexer()
-m.build()
+    def tokenize(self):
+        self.skipWhitespace()
+        if self.checkIfEof():
+            return
+        elif self.checkIfKeyword():
+            return
+        elif self.checkIfNumber():
+            return
+        elif self.checkText():
+            return
+        elif self.checkIfDoubleOperator():
+            return
+        elif self.checkCharacter():
+            return
+        else:
+            self.token = Token(TokenType.UNKNOWN, self.source.getCurrentChar())
+            self.source.nextChar()
+            return
 
-data = m.tokenize_input(m.filePath)
-for dat in data:
-    print(dat)
+    def getToken(self):
+        return self.token
+
+
+#lexer = Lexer("/Users/maciekpaszylka/Desktop/test2.txt")
+
+# lexer = Lexer("testText.txt")
+
+# #while lexer.getToken().getType() != TokenType.EOL:
+# lexer.tokenize()
+# print(lexer.getToken())

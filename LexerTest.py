@@ -1,55 +1,113 @@
 import unittest
-from Lexer import  Lexer
+from Lexer import Lexer
+import io
+
+from Token import TokenType
 
 
-class LexerTest(unittest.TestCase):
+class MyTestCase(unittest.TestCase):
 
-    m = Lexer()
-    m.build()
+    def testNames(self):
 
-    def test_keyword_type_and_value_after_tokenizing(self):
+        lexer = Lexer("testObjectId.txt")
+        names = ['Maciej', 'currency', 'currency2', 'While2', 'if123']
+
+        for i in range(len(names)-1):
+            lexer.tokenize()
+            self.assertEqual(lexer.getToken().tokenType, TokenType.NAME)
+            self.assertEqual(lexer.getToken().value, names[i])
+
+
+    def testKeywords(self):
+        lexer = Lexer("testKeywords.txt")
         keywords = {
 
-            'def': 'DEF',
-            'print': 'PRINT',
-            'var': 'VAR',
-            'while': "WHILE",
-            'if': "IF",
-            'else': 'ELSE'
+        'def': TokenType.DEF_KW,
+        'print': TokenType.PRINT_KW,
+        'var': TokenType.VAR_KW,
+        'while': TokenType.WHILE_KW,
+        'if': TokenType.IF_KW,
+        'else': TokenType.ELSE_KW,
+        'return': TokenType.RETURN_KW,
+        'string': TokenType.STRING,
+
         }
-        for key in keywords.keys():
-            self.assertEqual(self.m.tokenize(key).value , key )
-            self.assertEqual(self.m.tokenize(key).type, keywords[key])
+        for i in range(len(keywords)-1):
 
-    def test_name_tokenizing(self):
-        names = ["Maciej", "USD", "zlote", "dolary", "k"]
-        for name in names:
-            self.assertEqual(self.m.tokenize(name).value, name)
-            self.assertEqual(self.m.tokenize(name).type, 'NAME')
+            lexer.tokenize()
+            self.assertEqual(lexer.getToken().tokenType, list(keywords.values())[i])
+            self.assertEqual(lexer.getToken().value, list(keywords.keys())[i])
 
-    def test_operators(self):
-        operators = {
-            '*' : 'MULTIPLY',
-            '/' : 'DIVIDE',
-            '+' : 'PLUS',
-            '-' : 'MINUS',
-            '=' : 'ASSIGN',
-            '==': 'EQUALS',
-            '!=': 'NOTEQUAL',
-            '>=': 'GREATEROREQUAL',
-            '<=': 'LESSOREQUAL',
-            '>' : 'GREATER',
-            '<' : 'LESS',
-            '&' : 'AND',
-            '|' : 'OR'
+
+    def testNumbers(self):
+        lexer = Lexer("testNumbers.txt")
+        numbers = ['12.0', '3', '13.7', '15.8']
+        for i in range(len(numbers)-1):
+
+            lexer.tokenize()
+            self.assertEqual(lexer.getToken().tokenType, TokenType.NUMBER)
+            self.assertEqual(lexer.getToken().value, numbers[i])
+
+
+    def testText(self):
+        lexer = Lexer("testText.txt")
+        text = "Przykładowy tekst dla lexera"
+
+        lexer.tokenize()
+        self.assertEqual(lexer.getToken().tokenType, TokenType.TEXT)
+        self.assertEqual(lexer.getToken().value, text)
+
+
+    def testCharacters(self):
+        lexer = Lexer("testCharacters.txt")
+        characters = {
+            '+': TokenType.PLUS,
+            '-': TokenType.MINUS,
+            '*': TokenType.MULTIPLY,
+            '/': TokenType.DIVIDE,
+            '!': TokenType.NOT,
+            '>': TokenType.GREATER,
+            '<': TokenType.LESS,
+            '&': TokenType.AND,
+            '|': TokenType.OR,
+            '[': TokenType.LEFTBRACKET,
+            ']': TokenType.RIGHTBRACKET,
+            '(': TokenType.LEFTPARENTHESIS,
+            ')': TokenType.RIGHTPRAENTHESIS,
+            '{': TokenType.LEFTCURLY,
+            '}': TokenType.RIGHTCURLY,
+            ',': TokenType.COMMA,
+            '=': TokenType.ASSIGN,
+            ';': TokenType.SEMICOLON,
+            ':': TokenType.COLON,
+            '.': TokenType.DOT
+
         }
-        for operator in operators.keys():
-            self.assertEqual(self.m.tokenize(operator).value , operator )
-            self.assertEqual(self.m.tokenize(operator).type, operators[operator])
+        for i in range(len(characters)-1):
 
-    def test_numbers(self):
-        numbers= ['2.3' , '5.4', '12.0', '16.5']
-        for number in numbers:
-            self.assertEqual(self.m.tokenize(number).value, float(number))
-            self.assertEqual(self.m.tokenize(number).type, 'NUMBER')
+            lexer.tokenize()
+            self.assertEqual(lexer.getToken().tokenType, list(characters.values())[i])
+            self.assertEqual(lexer.getToken().value, list(characters.keys())[i])
+
+    def testDoubleOperators(self):
+        lexer = Lexer("testDoubleOperators.txt")
+        doubleOperators = {
+            '==': TokenType.EQUALS,
+            '!=': TokenType.NOTEQUAL,
+            '>=': TokenType.GREATEROREQUAL,
+            '<=': TokenType.LESSOREQUAL
+        }
+        for i in range(len(doubleOperators)-1):
+
+            lexer.tokenize()
+            self.assertEqual(lexer.getToken().tokenType, list(doubleOperators.values())[i])
+            self.assertEqual(lexer.getToken().value, list(doubleOperators.keys())[i])
+
+    def testUnknownInput(self):
+        unknownInput = ['$' ,'%','^']
+        lexer = Lexer("testUnknownInput.txt")
+        for i in range(len(unknownInput)-1):
+            lexer.tokenize()
+            self.assertEqual(lexer.getToken().tokenType, TokenType.UNKNOWN)
+            self.assertEqual(lexer.getToken().value, unknownInput[i])
 
