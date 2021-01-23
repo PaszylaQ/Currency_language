@@ -9,4 +9,10 @@ class Assignement(Node):
         self.expression = expression
 
     def __repr__(self):
-        return f"[Assignement: {self.name}, {self.expression}]"
+        return f"(Assignement: {self.name}, {self.expression})"
+
+    def __eq__(self, other):
+        return self.name == other.name and self.expression == other.expression
+
+    def getChildren(self):
+        return [self.name, self.expression]

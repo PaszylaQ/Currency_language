@@ -1,3 +1,4 @@
+from src.Token import TokenType
 from src.ast.value import Value
 
 class Bool(Value):
@@ -10,4 +11,9 @@ class Bool(Value):
         return self.value == other.value
 
     def __repr__(self):
-        return f"[BOOL: {self.value}]"
+        return f"(BOOL: {self.value})"
+    def getChildren(self):
+        return self.value
+
+    def getType(self):
+        return TokenType.BOOL_KW

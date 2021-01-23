@@ -9,4 +9,15 @@ class Block(Node):
         self.returnStatement = returnStatement
 
     def __repr__(self):
-        return f"[Assignement: {self.listOfStatements}, {self.returnStatement}]"
+        return f"(Block: {self.listOfStatements}, {self.returnStatement})"
+
+    def __eq__(self, other):
+        return self.listOfStatements == other.listOfStatements and self.returnStatement == other.returnStatement
+
+    def getChildren(self):
+        results= []
+        if self.listOfStatements:
+            results.append(self.listOfStatements)
+        if self.returnStatement:
+            results.append(self.returnStatement)
+        return results

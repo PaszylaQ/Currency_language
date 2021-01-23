@@ -3,9 +3,11 @@ from src.Source import Source
 from src.Lexer import Lexer
 from src.ast.assignement import Assignement
 from src.ast.block import Block
+from src.ast.bool import Bool
 from src.ast.booleanExpr import BooleanExpr
+from src.ast.currency import Currency
 from src.ast.expression import Expression
-from src.Token import TokenType
+from src.Token import TokenType, Characters
 from src.ast.func import Func
 from src.ast.funcCall import FuncCall
 from src.ast.ifStatement import IfStatement
@@ -16,8 +18,6 @@ from src.ast.value import Value
 from src.ast.whileStatement import WhileStatement
 from src.exception import InvalidSyntax
 from src.ast.variable import Variable
-
-
 
 
 class Parser():
@@ -102,7 +102,6 @@ class Parser():
         else:
             return self.parseSimpleStatement()
 
-
     def parseSimpleStatement(self):
         currentTokenType = self.currentToken.getType()
         variableTypes = [
@@ -110,13 +109,13 @@ class Parser():
             TokenType.USD_KW
         ]
         if currentTokenType == TokenType.NAME:
-            statement =  self.parseAssignementOrFuncCall()
+            statement = self.parseAssignementOrFuncCall()
         elif currentTokenType == TokenType.PRINT_KW:
             statement = self.parsePrintStatement()
         elif currentTokenType in variableTypes:
             statement = self.parseVariableDeclaration()
         elif self.currentToken.getType() == TokenType.RETURN_KW:
-            statement =  self.parseReturnStatement()
+            statement = self.parseReturnStatement()
         else:
             raise InvalidSyntax
 
@@ -137,7 +136,7 @@ class Parser():
             text = self.consume()
         else:
             text = self.parseOppExpression()
-        if text == None:
+        if text is None:
             raise InvalidSyntax
         else:
             self.checkIfRequiredAndConsume(TokenType.RIGHTPRAENTHESIS)
@@ -159,7 +158,7 @@ class Parser():
         if self.currentToken.getType() == TokenType.ELSE_KW:
             self.consume()
             elseBlock = self.parseBlock()
-        return IfStatement(cond,block, elseBlock)
+        return IfStatement(cond, block, elseBlock)
 
     def parseOrExpression(self):
         expr1 = self.parseAndExpression()
@@ -170,8 +169,7 @@ class Parser():
             operator = self.consume()
             expr2 = self.parseAndExpression()
 
-        return BooleanExpr(expr1, operator,  expr2)
-
+        return BooleanExpr(expr1, operator, expr2)
 
     def parseAndExpression(self):
         expr1 = self.parseCondition()
@@ -179,21 +177,21 @@ class Parser():
         operator = None
 
         if self.currentToken.getType() == TokenType.AND:
-            operator = self.self.consume()
+            operator = self.consume()
             expr2 = self.parseCondition()
 
-        return BooleanExpr(expr1,operator,  expr2)
-
+        return BooleanExpr(expr1, operator, expr2)
 
     def parseCondition(self):
         expr1 = self.parseExpression()
         operator = None
-        expr2= None
+        expr2 = None
 
-        requiredTokens = [TokenType.GREATEROREQUAL, TokenType.LESSOREQUAL, TokenType.NOTEQUAL, TokenType.EQUALS, TokenType.GREATER, TokenType.LESS]
+        requiredTokens = [TokenType.GREATEROREQUAL, TokenType.LESSOREQUAL, TokenType.NOTEQUAL, TokenType.EQUALS,
+                          TokenType.GREATER, TokenType.LESS]
 
-        if self.currentToken.getType() in  requiredTokens:
-            operator =self.consume()
+        if self.currentToken.getType() in requiredTokens:
+            operator = self.consume()
             expr2 = self.parseExpression()
         return BooleanExpr(expr1, operator, expr2)
 
@@ -201,10 +199,10 @@ class Parser():
         self.checkIfRequiredAndConsume(TokenType.LEFTCURLY)
         listOfStatements = []
         returnStatement = None
-        while self.currentToken.getType() not in [ TokenType.RIGHTCURLY]:
-              listOfStatements.append(self.parseStatement())
+        while self.currentToken.getType() not in [TokenType.RIGHTCURLY]:
+            listOfStatements.append(self.parseStatement())
         if self.currentToken.getType() == TokenType.RETURN_KW:
-            returnStatement = self.parseReturnStatement()
+            returnStatement = self.parseReturnStatement()  # parsowanie funkcji nie konczy sie na return tylko na left curly
         self.checkIfRequiredAndConsume(TokenType.RIGHTCURLY)
         return Block(listOfStatements, returnStatement)
 
@@ -212,18 +210,14 @@ class Parser():
         self.consume()
         expression = self.parseExpression()
         return ReturnStatement(expression)
+
     def parseWhileStatement(self):
         self.checkIfRequiredAndConsume(TokenType.WHILE_KW)
         self.checkIfRequiredAndConsume(TokenType.LEFTPARENTHESIS)
         cond = self.parseOrExpression()
         self.checkIfRequiredAndConsume(TokenType.RIGHTPRAENTHESIS)
         block = self.parseBlock()
-        return WhileStatement(cond,block)
-
-
-
-
-
+        return WhileStatement(cond, block)
 
     def parseAssignementOrFuncCall(self):
         name = self.currentToken.getValue()
@@ -231,7 +225,7 @@ class Parser():
         if self.currentToken.getType() == TokenType.ASSIGN:
             self.consume()
             expr = self.parseExpression()
-            return Assignement(name, expr)
+            return Assignement(Name(name), expr)
         else:
             return self.parseFunCall(name)
 
@@ -242,7 +236,12 @@ class Parser():
         if self.currentToken.getType() == TokenType.ASSIGN:
             self.checkIfRequiredAndConsume(TokenType.ASSIGN)
             value = self.parseExpression()
-        return Variable(variableType, variableName, value)
+        if variableType == TokenType.VAR_KW:
+            return Variable(variableType, variableName, value)
+        elif variableType == TokenType.BOOL_KW:
+            return Bool(value)
+        else:
+            return Currency(variableType, variableName, value)
 
     def parseType(self):
         variableTypes = [
@@ -287,13 +286,22 @@ class Parser():
             return Value(tokenValue)
         elif self.currentToken.getType() == TokenType.NAME:
             return self.parseNameOrFunCall()
+        elif self.currentToken.getType() == TokenType.LEFTPARENTHESIS:
+            self.consume()
+            expression = self.parseExpression()
+            if self.currentToken.getType() != TokenType.RIGHTPRAENTHESIS:
+                raise InvalidSyntax
+            else:
+                self.consume()
+                return expression
+
     def parseNameOrFunCall(self):
         name = self.currentToken.getValue()
         self.consume()
         if self.currentToken.getType() == TokenType.LEFTPARENTHESIS:
-            return self.parseFuncCall(name)
+            return self.parseFunCall(name)
 
-        return name
+        return Name(name)
 
     def parseFunCall(self, name):
         self.checkIfRequiredAndConsume(TokenType.LEFTPARENTHESIS)
@@ -302,24 +310,25 @@ class Parser():
             self.consume()
         else:
             arguments = self.parseFunCallArgs()
-        return FuncCall(name, arguments)
+
+        return FuncCall(Name(name), arguments)
 
     def parseFunCallArgs(self):
-        arguments =[]
+        arguments = []
         arguments.append(self.parseExpression())
-        if self.currentToken.getType() != TokenType.COMMA:
+        if self.currentToken.getType() == TokenType.COMMA:
             while self.currentToken.getType() != TokenType.RIGHTPRAENTHESIS:
                 self.checkIfRequiredAndConsume(TokenType.COMMA)
                 arguments.append((self.parseExpression()))
         self.checkIfRequiredAndConsume(TokenType.RIGHTPRAENTHESIS)
         return arguments
 
-    def parseArgument(self):
+    def parseArgument(self):  # TODO: dodac typy currencies
 
         self.checkIfRequiredAndConsume(TokenType.LEFTPARENTHESIS)
         variable_types = [
             TokenType.RIGHTPRAENTHESIS, TokenType.VAR_KW, TokenType.NUMBER,
-            TokenType.BOOL_KW
+            TokenType.BOOL_KW, TokenType.PLN_KW
         ]
         arguments = []
         self.checkIfRequiredTokensInCertainTypes(variable_types)
@@ -327,15 +336,19 @@ class Parser():
             variableType = self.currentToken.getType()
             self.consume()
             token = self.checkIfRequiredAndConsume(TokenType.NAME)
-            variableName = Name(token.getValue())
-            arguments.append(Variable(variableType, variableName, None, None))
+            variableName = Name(token.getValue())  # TODO: dodaj typ currency
+            if variableType == TokenType.VAR_KW:
+                arguments.append(Variable(variableType, variableName, None, None))
+            else:
+                arguments.append(Currency(variableType, variableName, None, None))
+
             while True:
                 requiredTokens = [TokenType.COMMA, TokenType.RIGHTPRAENTHESIS]
                 self.checkIfRequiredTokensInCertainTypes(requiredTokens)
                 if self.currentToken.getType() == TokenType.RIGHTPRAENTHESIS:
                     break
                 variable_types = [
-                    TokenType.VAR_KW, TokenType.NUMBER, TokenType.BOOL_KW
+                    TokenType.VAR_KW, TokenType.NUMBER, TokenType.BOOL_KW, TokenType.PLN_KW
                 ]
                 self.consume()
                 self.checkIfRequiredTokensInCertainTypes(variable_types)
@@ -343,8 +356,11 @@ class Parser():
                 self.consume()
                 token = self.checkIfRequiredAndConsume(TokenType.NAME)
                 nextvariableName = Name(token.getValue())
-                arguments.append(
-                    Variable(nextvariableType, nextvariableName, None, None))
+                if nextvariableType == TokenType.VAR_KW:
+                    arguments.append(Variable(nextvariableType, nextvariableName, None, None))
+                else:
+                    arguments.append(Currency(nextvariableType, nextvariableName, None, None))
+
         return arguments
 
     def parseFunc(self):
@@ -352,12 +368,9 @@ class Parser():
 
         self.checkIfRequiredAndConsumeTokensInCertainTypes(requiredTokens)
 
+        funcType = self.parseType()
         identifier = self.parseId()
         arguments = self.parseArgument()
         self.checkIfRequiredAndConsume(TokenType.RIGHTPRAENTHESIS)
         body = self.parseBlock()
-        return Func(identifier, arguments, body, None, None)
-
-
-
-
+        return Func(funcType, identifier, arguments, body, None, None)

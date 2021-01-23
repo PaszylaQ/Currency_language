@@ -9,4 +9,7 @@ class PrintFunc(Node):
         return self.identifier == other.identifier
 
     def __repr__(self):
-        return f"[PRINT: {self.identifier}]"
+        return f"(PRINT: {self.identifier})"
+
+    def getChildren(self):
+        return self.identifier

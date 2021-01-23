@@ -17,7 +17,7 @@ class Lexer:
         name = ""
         if currentChar.isalpha():
             while currentChar.isalpha() or currentChar.isdigit():
-                name+=currentChar
+                name += currentChar
                 currentChar = self.source.nextChar()
         return name
 
@@ -26,16 +26,15 @@ class Lexer:
         buffer = None
         if currentChar == '"':
             buffer = ""
-            currentChar= self.source.nextChar()
+            currentChar = self.source.nextChar()
             while currentChar != '"':
                 if currentChar == '':
                     print("Unterminated string")
                     break
                 else:
-                    buffer+=currentChar
+                    buffer += currentChar
                     currentChar = self.source.nextChar()
         return buffer
-
 
     def checkText(self):
         text = self.readString()
@@ -54,9 +53,8 @@ class Lexer:
             currentChar = self.source.nextChar()
 
         elif currentChar.isdigit() and currentChar != 0:
-            while currentChar.isdigit() or currentChar =='.':
-
-                number+= currentChar
+            while currentChar.isdigit() or currentChar == '.':
+                number += currentChar
                 currentChar = self.source.nextChar()
         return number
 
@@ -72,12 +70,12 @@ class Lexer:
     def checkIfDoubleOperator(self):
         currentChar = self.source.getCurrentChar()
         operators = ""
-        if currentChar == '>' or currentChar== '<' or currentChar == '=' or currentChar =='!':
+        if currentChar == '>' or currentChar == '<' or currentChar == '=' or currentChar == '!':
             operators += currentChar
             currentChar = self.source.nextChar()
-            if(operators+currentChar) in Characters.doubleOperators:
-                tokenType = Characters.doubleOperators[operators+currentChar]
-                self.token = Token(tokenType, operators+currentChar)
+            if (operators + currentChar) in Characters.doubleOperators:
+                tokenType = Characters.doubleOperators[operators + currentChar]
+                self.token = Token(tokenType, operators + currentChar)
                 self.source.nextChar()
                 return True
             elif operators in Characters.characters:
@@ -112,7 +110,6 @@ class Lexer:
             return True
         return False
 
-
     def tokenize(self):
         self.skipWhitespace()
         if self.checkIfEof():
@@ -135,8 +132,7 @@ class Lexer:
     def getToken(self):
         return self.token
 
-
-#lexer = Lexer("/Users/maciekpaszylka/Desktop/test2.txt")
+# lexer = Lexer("/Users/maciekpaszylka/Desktop/test2.txt")
 
 # lexer = Lexer("testText.txt")
 

@@ -10,4 +10,10 @@ class BooleanExpr(Node):
 
 
     def __repr__(self):
-        return f"[BooleanExpr: {self.lValue},{self.operator}, {self.rValue}]"
+        return f"(BooleanExpr: {self.lValue},{self.operator}, {self.rValue})"
+
+    def __eq__(self, other):
+        return self.lValue == other.lValue and self.operator == other.operator and self.rValue == other.rValue
+
+    def getChildren(self):
+        return [self.lValue, self.operator, self.rValue]
