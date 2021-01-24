@@ -8,7 +8,17 @@ class ReturnStatement(Node):
         self.rightOperand = rightOperand
 
     def __eq__(self, other):
-        return self.leftOperand == other.left_operand and self.operation == other.operation and self.rightOperand == other.rightOperand
+        return self.leftOperand == other.leftOperand and self.operation == other.operation and self.rightOperand == other.rightOperand
 
     def __repr__(self):
-        return f"[ReturnStatement: {self.leftOperand}, {self.operation}, {self.rightOperand}]"
+        return f"(ReturnStatement: {self.leftOperand}, {self.operation}, {self.rightOperand})"
+
+    def getChildren(self):
+        result = []
+        if self.leftOperand:
+            result.append(self.leftOperand)
+        if self.operation:
+            result.append(self.operation)
+        if self.rightOperand:
+            result.append(self.rightOperand)
+        return result

@@ -2,14 +2,30 @@ from src.ast.node import Node
 
 
 class Variable(Node):
-    def __init__(self, var_type, var_id, value = None, line = None, column = None):
+    def __init__(self, varType, varId, value = None, line = None, column = None):
         super().__init__(line,column)
-        self.var_type = var_type
-        self.var_id = var_id
+        self.varType = varType
+        self.varId = varId
         self.value = value
 
     def __eq__(self, other):
-        self.var_type == other.var_type and self.var_id == other.var_id and self.value == other.value
+        return self.varType == other.varType and self.varId == other.varId and self.value == other.value
 
     def __repr__(self):
-        return f"[Variable: {self.var_type}, {self.var_id}, {self.value}]"
+        return f"(Variable: {self.varType}, {self.varId}, {self.value})"
+
+    def setValue(self,value):
+        self.value = value
+
+    def getType(self):
+        return self.varType
+
+    def getChildren(self):
+        result = []
+        if self.varType:
+            result.append(self.varType)
+        if self.varId:
+            result.append(self.varId)
+        if self.value:
+            result.append(self.value)
+        return result

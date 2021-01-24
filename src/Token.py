@@ -7,7 +7,7 @@ class TokenType(Enum):
     NAME = auto()
     PLUS = auto()
     MINUS = auto()
-    MULTIPLY =auto()
+    MULTIPLY = auto()
     DIVIDE = auto()
     ASSIGN = auto()
     EQUALS = auto()
@@ -26,7 +26,7 @@ class TokenType(Enum):
     LEFTCURLY = auto()
     RIGHTCURLY = auto()
     COMMA = auto()
-    EOF= auto()
+    EOF = auto()
     UNKNOWN = auto()
     DEF_KW = auto()
     PRINT_KW = auto()
@@ -46,7 +46,6 @@ class TokenType(Enum):
     DOUBLE_QUOTE = auto()
 
 
-
 class Characters:
     keywords = {
 
@@ -58,56 +57,61 @@ class Characters:
         'else': TokenType.ELSE_KW,
         'return': TokenType.RETURN_KW,
         'string': TokenType.STRING,
-        'true' : TokenType.BOOL,
-        'false' : TokenType.BOOL,
-        'bool' : TokenType.BOOL_KW,
-        'PLN' : TokenType.PLN_KW,
+        'true': TokenType.BOOL,
+        'false': TokenType.BOOL,
+        'bool': TokenType.BOOL_KW,
+        'PLN': TokenType.PLN_KW,
         'USD': TokenType.USD_KW
     }
 
     characters = {
-        '+' : TokenType.PLUS,
-        '-' : TokenType.MINUS,
-        '*' : TokenType.MULTIPLY,
-        '/' : TokenType.DIVIDE,
-        '!' : TokenType.NOT,
-        '>' : TokenType.GREATER,
-        '<' : TokenType.LESS,
-        '&' : TokenType.AND,
-        '|' : TokenType.OR,
-        '[' : TokenType.LEFTBRACKET,
-        ']' : TokenType.RIGHTBRACKET,
-        '(' : TokenType.LEFTPARENTHESIS,
-        ')' : TokenType.RIGHTPRAENTHESIS,
-        '{' : TokenType.LEFTCURLY,
-        '}' : TokenType.RIGHTCURLY,
-        ',' : TokenType.COMMA,
-        '=' : TokenType.ASSIGN,
-        ';' : TokenType.SEMICOLON,
-        ':' : TokenType.COLON,
-        '.' : TokenType.DOT,
-        '"' : TokenType.DOUBLE_QUOTE
+        '+': TokenType.PLUS,
+        '-': TokenType.MINUS,
+        '*': TokenType.MULTIPLY,
+        '/': TokenType.DIVIDE,
+        '!': TokenType.NOT,
+        '>': TokenType.GREATER,
+        '<': TokenType.LESS,
+        '&': TokenType.AND,
+        '|': TokenType.OR,
+        '[': TokenType.LEFTBRACKET,
+        ']': TokenType.RIGHTBRACKET,
+        '(': TokenType.LEFTPARENTHESIS,
+        ')': TokenType.RIGHTPRAENTHESIS,
+        '{': TokenType.LEFTCURLY,
+        '}': TokenType.RIGHTCURLY,
+        ',': TokenType.COMMA,
+        '=': TokenType.ASSIGN,
+        ';': TokenType.SEMICOLON,
+        ':': TokenType.COLON,
+        '.': TokenType.DOT,
+        '"': TokenType.DOUBLE_QUOTE
 
     }
 
-    doubleOperators={
-        '==' : TokenType.EQUALS,
-        '!=' : TokenType.NOTEQUAL,
-        '>=' : TokenType.GREATEROREQUAL,
-        '<=' : TokenType.LESSOREQUAL
+    doubleOperators = {
+        '==': TokenType.EQUALS,
+        '!=': TokenType.NOTEQUAL,
+        '>=': TokenType.GREATEROREQUAL,
+        '<=': TokenType.LESSOREQUAL
     }
+    currencies = {
+        'PLN': TokenType.PLN_KW,
+        'USD': TokenType.USD_KW
+    }
+
 
 class Token:
 
-    def __init__(self, tokenType = TokenType.UNKNOWN, value= ""):
+    def __init__(self, tokenType=TokenType.UNKNOWN, value=""):
         self.tokenType = tokenType
         self.value = value
 
-
     def getValue(self):
         return self.value
+
     def getType(self):
         return self.tokenType
 
     def __repr__(self):
-        return f"Token type : {self.tokenType}, value = '{self.value}'"
+        return f"[Token: {self.tokenType}, {self.value}]"

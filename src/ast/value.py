@@ -6,4 +6,13 @@ class Value(Node):
         self.value = value
 
     def __repr__(self):
-        return f"[Value: {self.value}]"
+        return f"(Value: {self.value})"
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def accept(self, visitor):
+        return visitor.visit_value(self)
+
+    def getChildren(self):
+        return self.value

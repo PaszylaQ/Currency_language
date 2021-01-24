@@ -1,3 +1,3 @@
 class InvalidSyntax(Exception):
-   """Invalid syntax error"""
-   pass
+    """Invalid syntax error"""
+    pass

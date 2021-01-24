@@ -1,4 +1,5 @@
 from .node import Node
+from ..Token import TokenType
 
 
 class Name(Node):
@@ -10,4 +11,10 @@ class Name(Node):
         return self.name == other.name
 
     def __repr__(self):
-        return f"[Identifier: {self.name}]"
+        return f"(Identifier: {self.name})"
+
+    def getChildren(self):
+        return self.name
+
+    def getType(self):
+        return TokenType.NAME
