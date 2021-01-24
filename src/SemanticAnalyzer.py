@@ -76,7 +76,7 @@ class SemanticAnalyzer(NodeVisitor):
     def visitName(self, node):
         variable = self.executionScope.lookupVariableAndReturnVar(node, False)
         if variable is not None:
-            #print(f"[visitName: {variable.getType()}, {variable.varType}]")
+            # print(f"[visitName: {variable.getType()}, {variable.varType}]")
             return variable.getType()
         else:
             # print(self.executionScope.parentScope)
@@ -210,7 +210,7 @@ class SemanticAnalyzer(NodeVisitor):
             else:
                 self.visit(node)
 
-#sprawdzenie czy typ zwracany z blokow w funkcji w przypadku jego zwracanai pokrywa się z returnem w funkcji
+        # sprawdzenie czy typ zwracany z blokow w funkcji w przypadku jego zwracanai pokrywa się z returnem w funkcji
         if len(set(returnStatementTypes)) == 1:
             returnStatementTypes.append(None)
             if len(set(blockReturnStatementTypes) - set(returnStatementTypes)) == 0:
@@ -264,7 +264,6 @@ class SemanticAnalyzer(NodeVisitor):
 
         if node.elseBlock:
             returnType.append(self.visit(node.elseBlock))
-
 
         self.executionScope = ExecutionScope(parentScope, currentScope)
 

@@ -1,4 +1,3 @@
-from src.ast.value import Value
 from src.utils.checkIfFuncArgumentsEqual import checkIfFuncArgumentsEqual
 
 
@@ -17,13 +16,10 @@ class Scope():
         return vars
 
     def getFuncIds(self, functions):
-        funcs= []
+        funcs = []
         for func in functions:
             funcs.append(func.funcId)
         return funcs
-
-
-
 
     def pushVarDeclaration(self, variable):
         self.variables.append(variable)
@@ -47,8 +43,6 @@ class Scope():
         return Scope(self.variables + other.variables, self.functions + other.functions)
 
 
-
-
 class ExecutionScope():
 
     def __init__(self, parentScope, currentScope):
@@ -68,7 +62,6 @@ class ExecutionScope():
         return self.currentScope.checkIfFuncDeclared(function) or temp
 
     def lookupVariableAndReturnVar(self, variableName, currentScopeOnly=False):
-
 
         for var in self.currentScope.variables:
             if var.varId == variableName:

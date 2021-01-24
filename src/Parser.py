@@ -279,7 +279,7 @@ class Parser():
         return Expression(expr1, operation, expr2)
 
     def parseOppExpression(self):
-        tokens = [ TokenType.PLUS, TokenType.MULTIPLY, TokenType.MINUS, TokenType.DIVIDE]
+        tokens = [TokenType.PLUS, TokenType.MULTIPLY, TokenType.MINUS, TokenType.DIVIDE]
         if self.currentToken.getType() == TokenType.NUMBER:
             tokenValue = self.currentToken.getValue()
             self.consume()

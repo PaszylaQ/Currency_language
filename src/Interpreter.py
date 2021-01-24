@@ -4,7 +4,6 @@ from src.SemanticError import SemanticError
 from src.Token import TokenType
 from src.ast.func import Func
 from src.ast.ifStatement import IfStatement
-from src.ast.name import Name
 from src.ast.returnStatement import ReturnStatement
 from src.ast.value import Value
 from src.ast.variable import Variable
@@ -30,10 +29,9 @@ class Interpreter(NodeVisitor):
     def visitFunc(self, node):
         self.executionScope.pushFunction(node)
 
-
     def visitFuncCall(self, node):
         arguments = []
-        self.semanticAnalyzer.executionScope = self.executionScope #aktualizacja scope dla semantic analyzera w celu ujednolicenia go ze scopem interpetera
+        self.semanticAnalyzer.executionScope = self.executionScope  # aktualizacja scope dla semantic analyzera w celu ujednolicenia go ze scopem interpetera
         for arg in node.args:
             argType = self.semanticAnalyzer.visit(arg)
             arguments.append(Variable(argType, ""))
@@ -46,18 +44,18 @@ class Interpreter(NodeVisitor):
         parentScope = self.executionScope.getParentScope()
         currentScope = self.executionScope.getCurrentScope()
 
-        parsedArguments = self.parseArgumentsToVariables(args, func.arguments ) # sparsowane argumenty wywołania do przekazania do funkcji
+        parsedArguments = self.parseArgumentsToVariables(args,
+                                                         func.arguments)  # sparsowane argumenty wywołania do przekazania do funkcji
 
         self.executionScope = ExecutionScope(parentScope + currentScope, Scope(parsedArguments, []))
-        #print("newparent", self.executionScope.parentScope)
+        # print("newparent", self.executionScope.parentScope)
 
-        #print("newcurrent", self.executionScope.currentScope)
+        # print("newcurrent", self.executionScope.currentScope)
         returnValue = self.visit(func.body)
         self.executionScope = ExecutionScope(parentScope, currentScope)
         return returnValue
 
-
-    def parseArgumentsToVariables(self,arguments, declarationArguments):
+    def parseArgumentsToVariables(self, arguments, declarationArguments):
         copyOfArguments = declarationArguments.copy()
         for index in range(len(arguments)):
             copyOfArguments[index].value = Value(self.visit(arguments[index]))
@@ -65,7 +63,7 @@ class Interpreter(NodeVisitor):
 
     def visitBlock(self, node):
         for statement in node.listOfStatements:
-            if isinstance(statement , ReturnStatement):
+            if isinstance(statement, ReturnStatement):
                 return self.visit(statement)
             elif isinstance(statement, WhileStatement) or isinstance(statement, IfStatement):
                 returned = self.visit(statement)
@@ -76,7 +74,6 @@ class Interpreter(NodeVisitor):
     def visitReturnStatement(self, node):
         return self.visitExpression(node)
 
-
     def visitVariable(self, node):
         node.value = Value(self.visit(node.value))
         self.executionScope.pushVariable(node)
@@ -85,7 +82,6 @@ class Interpreter(NodeVisitor):
 
         node.value = Value(self.visit(node.value))
         self.executionScope.pushVariable(node)
-
 
     def visitValue(self, node):
         return float(node.value)
@@ -98,18 +94,13 @@ class Interpreter(NodeVisitor):
 
         print(self.visit(node.identifier))
 
-
     def visitName(self, node):
 
         variable = self.executionScope.lookupVariableAndReturnVar(node, False)
         return self.visit(variable.value)
 
-
-
-
-
-    def visitWhileStatement(self, node): #petla while sprawdzam warunek i dopoki nie natrafimy na return a warunek spelniony to wykonujemy
-
+    def visitWhileStatement(self,
+                            node):  # petla while sprawdzam warunek i dopoki nie natrafimy na return a warunek spelniony to wykonujemy
 
         condition = self.visit(node.condition)
         if condition == True:
@@ -118,38 +109,33 @@ class Interpreter(NodeVisitor):
                 return returned
             self.visit(node)
 
-
     def visitIfStatement(self, node):
-        #print(node.condition)
+        # print(node.condition)
         condition = self.visit(node.condition)
-        #print("condition", condition)
+        # print("condition", condition)
         if condition == True:
             return self.visit(node.content)
-        elif node.elseBlock is not None and condition == False :
+        elif node.elseBlock is not None and condition == False:
             return self.visit(node.elseBlock)
 
-
-
-
-
     def visitBooleanExpr(self, node):
-        #print(node.lValue)
+        # print(node.lValue)
         leftValue = self.visit(node.lValue)
-        #print("left", leftValue)
+        # print("left", leftValue)
         rightValue = self.visit(node.rValue) if node.rValue else None
-        #print("right", rightValue)
-#        print("tu", node.operator.getType())
+        # print("right", rightValue)
+        #        print("tu", node.operator.getType())
 
         if rightValue == None:
             return leftValue
 
         elif node.operator.getType() == TokenType.GREATER:
 
-            return  leftValue > rightValue
+            return leftValue > rightValue
 
         elif node.operator.getType() == TokenType.LESS:
 
-            return  leftValue < rightValue
+            return leftValue < rightValue
 
         elif node.operator.getType() == TokenType.NOTEQUAL:
 
@@ -165,7 +151,7 @@ class Interpreter(NodeVisitor):
             return leftValue >= rightValue
 
         elif node.operator.getType() == TokenType.LESSOREQUAL:
-            return  leftValue <= rightValue
+            return leftValue <= rightValue
 
         elif node.operator.getType() == TokenType.OR:
             return leftValue or rightValue
@@ -176,26 +162,24 @@ class Interpreter(NodeVisitor):
     def visitExpression(self, node):
         # print(f"[visitExpression: {type1}]")
         value1 = self.visit(node.leftOperand)
-        #print(value1)
+        # print(value1)
         value2 = self.visit(node.rightOperand) if node.rightOperand else None
-       # print(value2)
+        # print(value2)
         # print(f"[visitExpression: {type2 }]")
-          # sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
+        # sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
 
         if value2 == None:
             return value1
         elif node.operation == TokenType.PLUS:
-            return value1+value2
+            return value1 + value2
         elif node.operation == TokenType.MINUS:
-            return value1-value2
+            return value1 - value2
         elif node.operation == TokenType.MULTIPLY:
-            return value1*value2
+            return value1 * value2
         elif node.operation == TokenType.DIVIDE:
             if value2 == 0:
                 raise SemanticError(
                     "dzielenie przez 0"
                 )
             else:
-                return value1/value2
-
-
+                return value1 / value2

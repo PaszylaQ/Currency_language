@@ -7,6 +7,7 @@ class Source:
         self.positionInline = 0
         self.lineNumber = 1
         self.currentChar = self.nextChar()
+
     def getCurrencies(self, filepath):
         file = open(filepath, "r")
 
