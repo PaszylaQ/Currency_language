@@ -7,7 +7,6 @@ class WhileStatement(Node):
         self.content = content
         self.condition = condition
 
-
     def __repr__(self):
         return f"(WhileStatement: {self.condition}, {self.content})"
 

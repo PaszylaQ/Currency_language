@@ -1,13 +1,13 @@
-from src.Token import TokenType, Characters
 from src.ast.node import Node
 
 
 class Currency(Node):
-    def __init__(self,  varType, varId,  value =None, line=None, column=None):
+    def __init__(self, varType, varId, value=None, line=None, column=None):
         super().__init__(line, column)
         self.value = value
-        self.varType = varType #currencyId definiuje typ zmiennej walutowej
+        self.varType = varType  # currencyId definiuje typ zmiennej walutowej
         self.varId = varId
+
     def __repr__(self):
         return f"(Currency:{self.varType}, {self.varId}, {self.value})"
 
@@ -22,5 +22,3 @@ class Currency(Node):
 
     def getType(self):
         return self.varType
-
-

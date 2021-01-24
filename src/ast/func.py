@@ -2,8 +2,8 @@ from .node import Node
 
 
 class Func(Node):
-    def __init__(self, funcType ,  funcId, arguments, body = None, line=None, column=None):
-        super().__init__(line ,column)
+    def __init__(self, funcType, funcId, arguments, body=None, line=None, column=None):
+        super().__init__(line, column)
         self.funcType = funcType
         self.funcId = funcId
         self.arguments = arguments
@@ -16,5 +16,4 @@ class Func(Node):
         return f"(Function: {self.funcType} {self.funcId}, {self.arguments}, {self.body})"
 
     def getChildren(self):
-        return [self.funcId , self.arguments , self.body]
-
+        return [self.funcId, self.arguments, self.body]

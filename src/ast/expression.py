@@ -1,7 +1,8 @@
 from .node import Node
 
+
 class Expression(Node):
-    def __init__(self, leftOperand = None, operation=None, rightOperand=None, line=None, column=None):
+    def __init__(self, leftOperand=None, operation=None, rightOperand=None, line=None, column=None):
         super().__init__(line, column)
         self.leftOperand = leftOperand
         self.operation = operation
@@ -13,6 +14,7 @@ class Expression(Node):
 
     def __repr__(self):
         return f"(Expression: {self.leftOperand}, {self.operation}, {self.rightOperand})"
+
     def getChildren(self):
         result = []
         if self.leftOperand:

@@ -2,7 +2,7 @@ from .node import Node
 
 
 class FuncCall(Node):
-    def __init__(self, functionId, args = None, line=None, column=None):
+    def __init__(self, functionId, args=None, line=None, column=None):
         super().__init__(line, column)
         self.functionId = functionId
         self.args = args

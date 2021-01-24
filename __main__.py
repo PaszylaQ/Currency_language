@@ -1,14 +1,10 @@
 import io
 import sys
 
-from src.Interpreter import Interpreter
 from src.Lexer import Lexer
 from src.Parser import Parser
-from src.Scope import Scope
 from src.SemanticAnalyzer import SemanticAnalyzer
 from src.Source import Source
-from src.Token import TokenType
-from src.ast.variable import Variable
 
 if __name__ == "__main__":
     # sys.stdin = io.StringIO(
@@ -45,51 +41,51 @@ if __name__ == "__main__":
         # "PLN b = 4;"
 
         "def PLN name2(var abc) {"
-           # "name1(a , b);"
+        # "name1(a , b);"
         "PLN b = 4;"
         "    print(abc);"
-            "if (abc > 2){"
-                    "if (abc > 2){"
-                "return b;"
-            "}"
-                "else{"
+        "if (abc > 2){"
+        "if (abc > 2){"
         "return b;"
-     
+        "}"
+        "else{"
+        "return b;"
+
         "}"
         "return b;"
         "}"
         ""
-       # "    var a = 2 + 2;"
-       #"    return 4;"
-            #"name2(2);"
+        # "    var a = 2 + 2;"
+        # "    return 4;"
+        # "name2(2);"
         "return b;"
         "}"
-        #"name2(2);"
+        # "name2(2);"
 
-    # sys.stdin = io.StringIO(
-    #     " PLN i = 3;"
-    #     # "i = i + 1 ;
-    #     "PLN j = 5;"
-    #     #     "while( i > j | i<=j){"
-    #     #      "i = i+ j ;"
-    #     #     "}"
-    #     #     "if(j>=i){"
-    #     #     "print(i);"
-    #     #     "}"
-    #     #     "else{"
-    #     #     "PLN k = j+i;"
-    #     # "}"
-    #     "def name1(PLN a,  PLN b) {"
-    #     "var luz = 1;"
-    #     #        " i= 4;"
-    #     #
-    #     #     "var luz4 = i + b;"
-    #     # "   var luz2 = 2;"
-    #     # "var luz3 = i + luz;"
-    #     " name1(i, b );"
-    #     ""
-    #     "return 5;"
-    #     "}"
+        # sys.stdin = io.StringIO(
+        #     " PLN i = 3;"
+        #     # "i = i + 1 ;
+        #     "PLN j = 5;"
+        #     #     "while( i > j | i<=j){"
+        #     #      "i = i+ j ;"
+        #     #     "}"
+        #     #     "if(j>=i){"
+        #     #     "print(i);"
+        #     #     "}"
+        #     #     "else{"
+        #     #     "PLN k = j+i;"
+        #     # "}"
+        #     "def name1(PLN a,  PLN b) {"
+        #     "var luz = 1;"
+        #     #        " i= 4;"
+        #     #
+        #     #     "var luz4 = i + b;"
+        #     # "   var luz2 = 2;"
+        #     # "var luz3 = i + luz;"
+        #     " name1(i, b );"
+        #     ""
+        #     "return 5;"
+        #     "}"
 
         # "var name = name1(i,i);"
 

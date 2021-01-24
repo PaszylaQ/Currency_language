@@ -1,4 +1,3 @@
-from src.SemanticError import SemanticError
 from src.utils.checkIfFuncArgumentsEqual import checkIfFuncArgumentsEqual
 
 

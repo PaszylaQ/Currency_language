@@ -3,8 +3,8 @@ from src.ast.node import Node
 
 class Block(Node):
 
-    def __init__(self, listOfStatements = [], returnStatement = None, line = None, column = None):
-        super().__init__(line,column)
+    def __init__(self, listOfStatements=[], returnStatement=None, line=None, column=None):
+        super().__init__(line, column)
         self.listOfStatements = listOfStatements
         self.returnStatement = returnStatement
 
@@ -15,7 +15,7 @@ class Block(Node):
         return self.listOfStatements == other.listOfStatements and self.returnStatement == other.returnStatement
 
     def getChildren(self):
-        results= []
+        results = []
         if self.listOfStatements:
             results.append(self.listOfStatements)
         if self.returnStatement:
