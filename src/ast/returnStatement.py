@@ -1,5 +1,6 @@
 from .node import Node
 
+
 class ReturnStatement(Node):
     def __init__(self, leftOperand, operation=None, rightOperand=None, line=None, column=None):
         super().__init__(line, column)

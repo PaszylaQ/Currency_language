@@ -2,10 +2,10 @@ import io
 import sys
 from unittest import TestCase
 
-from src.Token import Token
 from src.Lexer import Lexer
 from src.Parser import Parser
 from src.Source import Source
+from src.Token import Token
 from src.Token import TokenType
 from src.ast.block import Block
 from src.ast.booleanExpr import BooleanExpr
@@ -23,8 +23,6 @@ class ParserTests(TestCase):
     def testParseVariableBool(self):
         sys.stdin = io.StringIO("bool var1;"
                                 )
-
-
 
         source = Source()
         lexer = Lexer(source)
@@ -59,19 +57,18 @@ class ParserTests(TestCase):
 
     def testParseFuncDeclarationWithArgs(self):
         sys.stdin = io.StringIO("def savingsInPolishCurrency(bool currency1){"
-                                 "var extra;"
-                                 "return extra;"
+                                "var extra;"
+                                "return extra;"
                                 "}")
-
-
 
         source = Source()
         lexer = Lexer(source)
         parser = Parser(source, lexer)
-        fu_nc =(parser.parseFunc())
+        fu_nc = (parser.parseFunc())
         func = Func(Name("savingsInPolishCurrency"),
                     [Variable(TokenType.BOOL_KW, Name("currency1"), None)],
-                    Block([Variable(TokenType.VAR_KW, Name("extra"), None),ReturnStatement(Expression(Expression("extra")))]))
+                    Block([Variable(TokenType.VAR_KW, Name("extra"), None),
+                           ReturnStatement(Expression(Expression("extra")))]))
 
         self.assertEqual(func, fu_nc)
 
@@ -80,10 +77,12 @@ class ParserTests(TestCase):
         source = Source()
         lexer = Lexer(source)
         parser = Parser(source, lexer)
-        declaration =(parser.parseVariableDeclaration())
-        declaration_ = Variable(TokenType.VAR_KW, Name("x"),Expression(Expression(Value("2"), None, None),TokenType.PLUS, Expression(Value("2"), TokenType.MULTIPLY, Value("2"))))
+        declaration = (parser.parseVariableDeclaration())
+        declaration_ = Variable(TokenType.VAR_KW, Name("x"),
+                                Expression(Expression(Value("2"), None, None), TokenType.PLUS,
+                                           Expression(Value("2"), TokenType.MULTIPLY, Value("2"))))
 
-        self.assertEqual(declaration_,declaration)
+        self.assertEqual(declaration_, declaration)
 
     def testParseWhile(self):
         statement_ = WhileStatement(BooleanExpr(BooleanExpr(
@@ -102,6 +101,4 @@ class ParserTests(TestCase):
         statement = parser.parseWhileStatement()
         print(statement)
 
-        self.assertEqual(statement_,statement)
-
-
+        self.assertEqual(statement_, statement)

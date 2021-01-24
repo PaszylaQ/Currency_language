@@ -2,8 +2,8 @@ from src.ast.node import Node
 
 
 class Variable(Node):
-    def __init__(self, varType, varId, value = None, line = None, column = None):
-        super().__init__(line,column)
+    def __init__(self, varType, varId, value=None, line=None, column=None):
+        super().__init__(line, column)
         self.varType = varType
         self.varId = varId
         self.value = value
@@ -14,7 +14,7 @@ class Variable(Node):
     def __repr__(self):
         return f"(Variable: {self.varType}, {self.varId}, {self.value})"
 
-    def setValue(self,value):
+    def setValue(self, value):
         self.value = value
 
     def getType(self):

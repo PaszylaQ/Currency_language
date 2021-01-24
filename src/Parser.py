@@ -1,13 +1,14 @@
 from typing import List
-from src.Source import Source
+
 from src.Lexer import Lexer
+from src.Source import Source
+from src.Token import TokenType
 from src.ast.assignement import Assignement
 from src.ast.block import Block
 from src.ast.bool import Bool
 from src.ast.booleanExpr import BooleanExpr
 from src.ast.currency import Currency
 from src.ast.expression import Expression
-from src.Token import TokenType, Characters
 from src.ast.func import Func
 from src.ast.funcCall import FuncCall
 from src.ast.ifStatement import IfStatement
@@ -15,9 +16,9 @@ from src.ast.name import Name
 from src.ast.printFunc import PrintFunc
 from src.ast.returnStatement import ReturnStatement
 from src.ast.value import Value
+from src.ast.variable import Variable
 from src.ast.whileStatement import WhileStatement
 from src.exception import InvalidSyntax
-from src.ast.variable import Variable
 
 
 class Parser():

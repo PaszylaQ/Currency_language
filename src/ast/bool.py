@@ -1,6 +1,7 @@
 from src.Token import TokenType
 from src.ast.value import Value
 
+
 class Bool(Value):
     def __init__(self, value, line=None, column=None):
         self.line = line
@@ -12,6 +13,7 @@ class Bool(Value):
 
     def __repr__(self):
         return f"(BOOL: {self.value})"
+
     def getChildren(self):
         return self.value
 

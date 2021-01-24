@@ -1,5 +1,6 @@
 from .node import Node
 
+
 class PrintFunc(Node):
     def __init__(self, identifier, line=None, column=None):
         super().__init__(line, column)
