@@ -1,3 +1,4 @@
+from src.ast.value import Value
 from src.utils.checkIfFuncArgumentsEqual import checkIfFuncArgumentsEqual
 
 
@@ -7,7 +8,22 @@ class Scope():
         self.functions = functions
 
     def __repr__(self):
-        return f"[Scope: {self.variables}, {self.functions}]"
+        return f"[Scope: {self.getVarIds(self.variables)} '\n', {self.getFuncIds(self.functions)}]"
+
+    def getVarIds(self, variables):
+        vars = []
+        for variable in variables:
+            vars.append(variable.varId)
+        return vars
+
+    def getFuncIds(self, functions):
+        funcs= []
+        for func in functions:
+            funcs.append(func.funcId)
+        return funcs
+
+
+
 
     def pushVarDeclaration(self, variable):
         self.variables.append(variable)
@@ -31,6 +47,8 @@ class Scope():
         return Scope(self.variables + other.variables, self.functions + other.functions)
 
 
+
+
 class ExecutionScope():
 
     def __init__(self, parentScope, currentScope):
@@ -50,7 +68,7 @@ class ExecutionScope():
         return self.currentScope.checkIfFuncDeclared(function) or temp
 
     def lookupVariableAndReturnVar(self, variableName, currentScopeOnly=False):
-        lookupVar = None
+
 
         for var in self.currentScope.variables:
             if var.varId == variableName:
@@ -66,7 +84,7 @@ class ExecutionScope():
     def lookupAndReturnFunction(self, funcCall, currentScopeOnly=False):
         lookupFunc = None
 
-        for func in self.currentScope.functions:
+        for func in reversed(self.currentScope.functions):
             if func.funcId == funcCall.funcId and checkIfFuncArgumentsEqual(funcCall.arguments, func.arguments):
                 lookupFunc = func
                 return lookupFunc  # sprawdzanie najepirw current a potem parent scope w przypadku nieodnalezienia
@@ -93,6 +111,17 @@ class ExecutionScope():
     def getParentScope(self):
         return self.parentScope
 
+    def searchAndReplaceValue(self, id, value):
+
+        for var in reversed(self.currentScope.variables):
+            if var.varId == id:
+                var.value = value
+                return
+                # sprawdzanie najepirw current a potem parent scope w przypadku nieodnalezienia
+        for var in reversed(self.parentScope.variables):
+            if var.varId == id:
+                var.value = value
+                return
 #
 # var savings = 2.0;
 #

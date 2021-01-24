@@ -1,6 +1,7 @@
 import io
 import sys
 
+from src.Interpreter import Interpreter
 from src.Lexer import Lexer
 from src.Parser import Parser
 from src.SemanticAnalyzer import SemanticAnalyzer
@@ -22,45 +23,72 @@ if __name__ == "__main__":
     # )
     sys.stdin = io.StringIO(
         #  "PLN wartosc = 8.9;"
-        #   " var i = 3;"
-        #  "def PLN name1(PLN a,  PLN b) {"
-        #    "var luz = 1;"
+
+        #    "i = 16 + 2;"
+        #     "print(i);"
+
+           #  "var a = 5.0;"
+            "var i = 4.0;"
+           # "def var name1(var a,  var b) {"
+           #      "i = i - 1;"
+           #      "if( i > 0) "
+           #  "   { "
+           #         "print(i);"
+           #           "name1(a , b);"
+           #         
+           #  "   } "
+           #      ""
+           #  "   return a + b; "
+           #  "}"
+           #   "print(name1(a, a));"
+           #  "print(i);"
         #      "  i = 4;"
         #    "name1(a, b);"
         #  "   var luz2 = 2;"
-        #      "var luz3 = i + luz;"
-        #      "if( luz3 >= luz2){"
-        #           "while( i > 2 | i <= 10){"
-        #               "print(b);"
-        #              "}"
-        #  "   return luz3;"
-        #  "  }"
+        # #      "var luz3 = i + luz;"
+        #
+        "while ( i > 0) "
+        "{"
+            " i = i - 1 ;"
+            "print(i);"
+        "}"
+        
+        # " var i = 3 + (1 * 2);"
+        # "if( 4 ==   4 | 4 == 5){"
+        #     # "while( i > 2 | i <= 10){"
+        #         "print(i);"
+        # # "}"
+        # "}"
+
+       # "def var sum(var a, var b){ return sum(a, b) + sum "
+        #    # "}"
+        # #  "   return luz3;"
+        #  "}"
         #     "return 5;"
         #  "}"
         # "PLN a = 5;"
-        # "PLN b = 4;"
+        #  "PLN b = 4;"
+        #
+        # "def var name2() {"
+        #     "var i = 5;"
+ #            "while ( i<10){"
+ #                "i = i + 1;"
+ #                "return i;"
+ #            "}"
+ #            "while ( i<10){"
+ #                "i = i + 1;"
+ # #              "return b;"
+ #            "}"
+ #
+ #        "return i;"
+ #        "} "
+ #         "name2();"
+         # "var i = 5;"
+         # "while ( i<10){"
+         # "i = i + 1;"
+       
+         # "}"
 
-        "def PLN name2(var abc) {"
-        # "name1(a , b);"
-        "PLN b = 4;"
-        "    print(abc);"
-        "if (abc > 2){"
-        "if (abc > 2){"
-        "return b;"
-        "}"
-        "else{"
-        "return b;"
-
-        "}"
-        "return b;"
-        "}"
-        ""
-        # "    var a = 2 + 2;"
-        # "    return 4;"
-        # "name2(2);"
-        "return b;"
-        "}"
-        # "name2(2);"
 
         # sys.stdin = io.StringIO(
         #     " PLN i = 3;"
@@ -129,8 +157,8 @@ if __name__ == "__main__":
     analyzer = SemanticAnalyzer(functions)
     analyzer.analyze()
     # print(functions)
-    # interpreter = Interpreter(functions)
-    # interpreter.interpret()
+    interpreter = Interpreter(functions, analyzer)
+    interpreter.interpret()
 
     # while if condition
     #

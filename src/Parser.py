@@ -272,7 +272,6 @@ class Parser():
         expr1 = self.parseOppExpression()
         expr2 = None
         operation = None
-
         if self.currentToken.getType() == TokenType.MULTIPLY or self.currentToken.getType() == TokenType.DIVIDE:
             operation = self.currentToken.getType()
             self.consume()
@@ -280,7 +279,7 @@ class Parser():
         return Expression(expr1, operation, expr2)
 
     def parseOppExpression(self):
-
+        tokens = [ TokenType.PLUS, TokenType.MULTIPLY, TokenType.MINUS, TokenType.DIVIDE]
         if self.currentToken.getType() == TokenType.NUMBER:
             tokenValue = self.currentToken.getValue()
             self.consume()
@@ -295,6 +294,8 @@ class Parser():
             else:
                 self.consume()
                 return expression
+        # elif self.currentToken.getType() in tokens:
+        #     self.consume()
 
     def parseNameOrFunCall(self):
         name = self.currentToken.getValue()

@@ -76,9 +76,12 @@ class SemanticAnalyzer(NodeVisitor):
     def visitName(self, node):
         variable = self.executionScope.lookupVariableAndReturnVar(node, False)
         if variable is not None:
-            # print(f"[visitName: {variable.getType()}, {variable.varType}]")
+            #print(f"[visitName: {variable.getType()}, {variable.varType}]")
             return variable.getType()
         else:
+            # print(self.executionScope.parentScope)
+            # print(self.executionScope.currentScope)
+            print(node.name)
             raise SemanticError(
                 "zmienna nie jest zadeklarowana"
             )
@@ -143,23 +146,12 @@ class SemanticAnalyzer(NodeVisitor):
         # jesli przypisujemy to co zwraca funkcja to zwracamy typ return statementu
         # print(arguments)
         # print(node.args)
+        print(self.executionScope.parentScope)
+        print(self.executionScope.currentScope)
         searchedDesiredFunction = Func(None, node.functionId, arguments)
         func = self.executionScope.lookupAndReturnFunction(searchedDesiredFunction)
-        # print(func)
         if func is not None:
-            # print(func.body.listOfStatements)
-            if func.body:
-                print(func)
-                returnStatement = self.getReturnStatement(func)
-
-                # print(returnStatement)
-                # print("weszlo", self.visit(func.body.returnStatement))
-                # print(returnStatement)
-                return self.visit(
-                    Expression(returnStatement.leftOperand, returnStatement.operation, returnStatement.rightOperand))
-            else:
-                return None
-
+            return func.funcType
         else:
 
             raise SemanticError(
@@ -206,26 +198,39 @@ class SemanticAnalyzer(NodeVisitor):
         # odwiedzanie kolejnych statementow w bloku i sprawdzenie typu return w ciałach while, if i funkcji
 
     def visitBlock(self, nodes):
+        blockReturnStatementTypes = []
         returnStatementTypes = []
         for node in nodes.listOfStatements:
-            if isinstance(node, WhileStatement) or isinstance(node, IfStatement) or isinstance(node, ReturnStatement):
-                print("byle co")
+            if isinstance(node, WhileStatement) or isinstance(node, IfStatement):
+                blockReturnStatementTypes.append(self.visit(node))
+
+            elif isinstance(node, ReturnStatement):
                 returnStatementTypes.append(self.visit(node))
 
             else:
                 self.visit(node)
 
-        print("typy", returnStatementTypes)
-
-        if len(set(returnStatementTypes)) > 1:
-            raise SemanticError(
-                "rozne zwracane typy w blokach "
-            )
-        elif len(set(returnStatementTypes)) == 1:
-            return returnStatementTypes[0]
-
+#sprawdzenie czy typ zwracany z blokow w funkcji w przypadku jego zwracanai pokrywa się z returnem w funkcji
+        if len(set(returnStatementTypes)) == 1:
+            returnStatementTypes.append(None)
+            if len(set(blockReturnStatementTypes) - set(returnStatementTypes)) == 0:
+                return returnStatementTypes[0]
+            else:
+                raise SemanticError(
+                    "typ zwracany przez funkcje jest rozny od typu zwracanego przez blok"
+                )
+        elif len(set(returnStatementTypes)) == 0:
+            returnStatementTypes.append(None)
+            if len(set(blockReturnStatementTypes) - set(returnStatementTypes)) == 0:
+                return None
+            else:
+                raise SemanticError(
+                    "typ zwracany przez funkcje jest rozny od typu zwracanego przez blok"
+                )
         else:
-            return None
+            raise SemanticError(
+                "rozne zwracane typy w bloku "
+            )
 
     def visitReturnStatement(self, node):
         return self.visitExpression(node)
@@ -247,8 +252,7 @@ class SemanticAnalyzer(NodeVisitor):
         self.visit(Expression(node.lValue, node.operator, node.rValue))
 
     def visitIfStatement(self, node):
-        returnTypeIf = None
-        returnTypeElse = None
+
         returnType = []
         self.visit(node.condition)
         parentScope = self.executionScope.getParentScope()
@@ -260,8 +264,10 @@ class SemanticAnalyzer(NodeVisitor):
 
         if node.elseBlock:
             returnType.append(self.visit(node.elseBlock))
-            # print(self.executionScope.currentScope)
+
+
         self.executionScope = ExecutionScope(parentScope, currentScope)
+
         if len(returnType) == 2 and returnType[0] == returnType[1]:
             return returnType[0]
         elif len(returnType) == 2 and returnType[0] != returnType[1]:

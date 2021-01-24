@@ -43,6 +43,13 @@ class TokenType(Enum):
     BOOL_KW = auto()
     PLN_KW = auto()
     USD_KW = auto()
+    GBP_KW = auto()
+    CHF_KW = auto()
+    AUD_KW = auto()
+    EUR_KW = auto()
+    CZK_KW = auto()
+    RUB_KW = auto()
+    JPY_KW = auto()
     DOUBLE_QUOTE = auto()
 
 
@@ -97,7 +104,14 @@ class Characters:
     }
     currencies = {
         'PLN': TokenType.PLN_KW,
-        'USD': TokenType.USD_KW
+        'USD': TokenType.USD_KW,
+        'GBP': TokenType.GBP_KW,
+        'CHF': TokenType.CHF_KW,
+        'AUD': TokenType.AUD_KW,
+        'EUR': TokenType.EUR_KW,
+        'CZK': TokenType.CZK_KW,
+        'RUB': TokenType.RUB_KW,
+        'JPY': TokenType.JPY_KW
     }
 
 
