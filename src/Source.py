@@ -8,8 +8,7 @@ class Source:
         self.lineNumber = 1
         self.currentChar = self.nextChar()
 
-    def getCurrencies(self, filepath):
-        file = open(filepath, "r")
+
 
     def getPositionInLine(self):
         return self.positionInline

@@ -68,7 +68,14 @@ class Characters:
         'false': TokenType.BOOL,
         'bool': TokenType.BOOL_KW,
         'PLN': TokenType.PLN_KW,
-        'USD': TokenType.USD_KW
+        'USD': TokenType.USD_KW,
+        'GBP': TokenType.GBP_KW,
+        'CHF': TokenType.CHF_KW,
+        'AUD': TokenType.AUD_KW,
+        'EUR': TokenType.EUR_KW,
+        'CZK': TokenType.CZK_KW,
+        'RUB': TokenType.RUB_KW,
+        'JPY': TokenType.JPY_KW
     }
 
     characters = {
@@ -113,13 +120,21 @@ class Characters:
         'RUB': TokenType.RUB_KW,
         'JPY': TokenType.JPY_KW
     }
+    def currencyTypesToList(self):
+        currencyList = []
+        for i in range(len(self.currencies)):
+            currencyList.append(list(self.currencies.values())[i])
+        return currencyList
+
 
 
 class Token:
 
-    def __init__(self, tokenType=TokenType.UNKNOWN, value=""):
+    def __init__(self, tokenType=TokenType.UNKNOWN, value="", line = None, column = None):
         self.tokenType = tokenType
         self.value = value
+        self.line = line
+        self.column = column
 
     def getValue(self):
         return self.value
@@ -129,3 +144,6 @@ class Token:
 
     def __repr__(self):
         return f"[Token: {self.tokenType}, {self.value}]"
+
+    def get_position(self):
+        return self.line, self.column

@@ -1,13 +1,20 @@
+from src.CurrencyReader import CurrencyReader
 from src.NodeVisitor import NodeVisitor
 from src.Scope import ExecutionScope, Scope
 from src.SemanticError import SemanticError
-from src.Token import TokenType
+from src.Token import TokenType, Characters
+from src.ast.currency import Currency
 from src.ast.func import Func
 from src.ast.ifStatement import IfStatement
 from src.ast.returnStatement import ReturnStatement
 from src.ast.value import Value
 from src.ast.variable import Variable
 from src.ast.whileStatement import WhileStatement
+from src.utils.getCurrenciesPath import getCurrenciesPath
+
+characters = Characters()
+currencies = characters.currencyTypesToList()
+currenciesDict = characters.currencies
 
 
 class Interpreter(NodeVisitor):
@@ -16,6 +23,7 @@ class Interpreter(NodeVisitor):
         self.tree = tree
         self.executionScope = ExecutionScope(Scope([], []), Scope([], []))
         self.semanticAnalyzer = semanticAnalyzer
+        self.currencies = CurrencyReader(getCurrenciesPath()).getCurrencies()
 
     def interpret(self):
         if self.tree is not None:
@@ -23,13 +31,11 @@ class Interpreter(NodeVisitor):
                 self.visit(node)
         return ''
 
-    def visitCurrency(self, node):
-        pass
 
-    def visitFunc(self, node):
+    def visitFunc(self, node, exchangeRate = None):
         self.executionScope.pushFunction(node)
 
-    def visitFuncCall(self, node):
+    def visitFuncCall(self, node, exchangeRate = None):
         arguments = []
         self.semanticAnalyzer.executionScope = self.executionScope  # aktualizacja scope dla semantic analyzera w celu ujednolicenia go ze scopem interpetera
         for arg in node.args:
@@ -61,7 +67,7 @@ class Interpreter(NodeVisitor):
             copyOfArguments[index].value = Value(self.visit(arguments[index]))
         return copyOfArguments
 
-    def visitBlock(self, node):
+    def visitBlock(self, node, exchangeRate = None):
         for statement in node.listOfStatements:
             if isinstance(statement, ReturnStatement):
                 return self.visit(statement)
@@ -71,36 +77,61 @@ class Interpreter(NodeVisitor):
                     return returned
             self.visit(statement)
 
-    def visitReturnStatement(self, node):
+    def visitReturnStatement(self, node, exchangeRate = None):
         return self.visitExpression(node)
 
-    def visitVariable(self, node):
+    def visitVariable(self, node, exchangeRate = None):
         node.value = Value(self.visit(node.value))
         self.executionScope.pushVariable(node)
 
-    def visitCurrency(self, node):
+    def visitCurrency(self, node, exchangeRate = None):
 
-        node.value = Value(self.visit(node.value))
-        self.executionScope.pushVariable(node)
+        if node.value is None:
+            self.executionScope.pushVariable(node)
 
-    def visitValue(self, node):
-        return float(node.value)
+        elif node.varType in currencies:
+            currencyName = TokenType(node.varType).name[0:-3]
+            exchangeRate = self.currencies["exchange"][currencyName]
+            node.value = Value(self.visit(node.value,exchangeRate))
+            self.executionScope.pushVariable(node)
 
-    def visitAssignement(self, node):
+        else:
+            node.value = Value(self.visit(node.value))
+            self.executionScope.pushVariable(node)
+
+    def visitValue(self, node, exchangeRate = None):
+
+        return float(node.value)/exchangeRate if exchangeRate else float(node.value)
+
+    def visitAssignement(self, node, exchangeRate = None):
         expressionValue = self.visit(node.expression)
         self.executionScope.searchAndReplaceValue(node.name, Value(expressionValue))
 
-    def visitPrintFunc(self, node):
+    def visitPrintFunc(self, node, exchangeRate = None):
+        temp = self.executionScope.lookupVariableAndReturnVar(node.identifier, False)
 
-        print(self.visit(node.identifier))
+        if isinstance(temp, Currency):
+            currencyName = TokenType(temp.varType).name[0:-3]
+            exchangeRate = self.currencies["exchange"][currencyName]
+            variable = self.visit(temp.value) * exchangeRate
+            variable = f"{variable} {currencyName}"
+            print(variable)
+        else:
+            print(self.visit(temp))
 
-    def visitName(self, node):
+    def visitNoneType(self, exchangeRate = None):
+        raise RuntimeError(
+            "proba dostania się do wartosci None"
+        )
+
+
+    def visitName(self, node, exchangeRate = None):
 
         variable = self.executionScope.lookupVariableAndReturnVar(node, False)
         return self.visit(variable.value)
 
     def visitWhileStatement(self,
-                            node):  # petla while sprawdzam warunek i dopoki nie natrafimy na return a warunek spelniony to wykonujemy
+                            node, exchangeRate = None):  # petla while sprawdzam warunek i dopoki nie natrafimy na return a warunek spelniony to wykonujemy
 
         condition = self.visit(node.condition)
         if condition == True:
@@ -109,7 +140,7 @@ class Interpreter(NodeVisitor):
                 return returned
             self.visit(node)
 
-    def visitIfStatement(self, node):
+    def visitIfStatement(self, node, exchangeRate = None):
         # print(node.condition)
         condition = self.visit(node.condition)
         # print("condition", condition)
@@ -118,7 +149,7 @@ class Interpreter(NodeVisitor):
         elif node.elseBlock is not None and condition == False:
             return self.visit(node.elseBlock)
 
-    def visitBooleanExpr(self, node):
+    def visitBooleanExpr(self, node, exchangeRate = None):
         # print(node.lValue)
         leftValue = self.visit(node.lValue)
         # print("left", leftValue)
@@ -159,14 +190,11 @@ class Interpreter(NodeVisitor):
         elif node.operator.getType() == TokenType.AND:
             return leftValue and rightValue
 
-    def visitExpression(self, node):
+    def visitExpression(self, node, exchangeRate = None):
         # print(f"[visitExpression: {type1}]")
-        value1 = self.visit(node.leftOperand)
+        value1 = self.visit(node.leftOperand, exchangeRate)
         # print(value1)
-        value2 = self.visit(node.rightOperand) if node.rightOperand else None
-        # print(value2)
-        # print(f"[visitExpression: {type2 }]")
-        # sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
+        value2 = self.visit(node.rightOperand, exchangeRate) if node.rightOperand else None
 
         if value2 == None:
             return value1

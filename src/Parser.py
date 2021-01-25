@@ -1,8 +1,9 @@
 from typing import List
 
+from src.CurrencyReader import CurrencyReader
 from src.Lexer import Lexer
 from src.Source import Source
-from src.Token import TokenType
+from src.Token import TokenType, Characters
 from src.ast.assignement import Assignement
 from src.ast.block import Block
 from src.ast.bool import Bool
@@ -20,6 +21,8 @@ from src.ast.variable import Variable
 from src.ast.whileStatement import WhileStatement
 from src.exception import InvalidSyntax
 
+characters = Characters()
+currencies = characters.currencyTypesToList()
 
 class Parser():
     def __init__(self, source: Source, lexer: Lexer):
@@ -105,10 +108,10 @@ class Parser():
 
     def parseSimpleStatement(self):
         currentTokenType = self.currentToken.getType()
-        variableTypes = [
-            TokenType.VAR_KW, TokenType.BOOL_KW, TokenType.PLN_KW,
-            TokenType.USD_KW
-        ]
+        variableTypes = [TokenType.VAR_KW]
+
+        variableTypes = variableTypes + currencies
+
         if currentTokenType == TokenType.NAME:
             statement = self.parseAssignementOrFuncCall()
         elif currentTokenType == TokenType.PRINT_KW:
@@ -159,7 +162,7 @@ class Parser():
         if self.currentToken.getType() == TokenType.ELSE_KW:
             self.consume()
             elseBlock = self.parseBlock()
-        return IfStatement(cond, block, elseBlock)
+        return IfStatement(cond, block, elseBlock,)
 
     def parseOrExpression(self):
         expr1 = self.parseAndExpression()
@@ -245,10 +248,8 @@ class Parser():
             return Currency(variableType, variableName, value)
 
     def parseType(self):
-        variableTypes = [
-            TokenType.VAR_KW, TokenType.BOOL_KW, TokenType.PLN_KW,
-            TokenType.USD_KW
-        ]
+        variableTypes = [TokenType.VAR_KW]
+        variableTypes = variableTypes + currencies
         type = self.checkIfRequiredAndConsumeTokensInCertainTypes(
             variableTypes)
         return type
@@ -328,10 +329,8 @@ class Parser():
     def parseArgument(self):  # TODO: dodac typy currencies
 
         self.checkIfRequiredAndConsume(TokenType.LEFTPARENTHESIS)
-        variable_types = [
-            TokenType.RIGHTPRAENTHESIS, TokenType.VAR_KW, TokenType.NUMBER,
-            TokenType.BOOL_KW, TokenType.PLN_KW
-        ]
+        variable_types = [TokenType.RIGHTPRAENTHESIS, TokenType.VAR_KW, TokenType.NUMBER]
+        variable_types = variable_types + currencies
         arguments = []
         self.checkIfRequiredTokensInCertainTypes(variable_types)
         if self.currentToken.getType() != TokenType.RIGHTPRAENTHESIS:
@@ -349,9 +348,8 @@ class Parser():
                 self.checkIfRequiredTokensInCertainTypes(requiredTokens)
                 if self.currentToken.getType() == TokenType.RIGHTPRAENTHESIS:
                     break
-                variable_types = [
-                    TokenType.VAR_KW, TokenType.NUMBER, TokenType.BOOL_KW, TokenType.PLN_KW
-                ]
+                variable_types = [TokenType.VAR_KW, TokenType.NUMBER]
+                variable_types = variable_types + currencies
                 self.consume()
                 self.checkIfRequiredTokensInCertainTypes(variable_types)
                 nextvariableType = self.currentToken.getType()

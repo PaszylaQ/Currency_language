@@ -1,11 +1,13 @@
 import io
 import sys
 
+from src.CurrencyReader import CurrencyReader
 from src.Interpreter import Interpreter
 from src.Lexer import Lexer
 from src.Parser import Parser
 from src.SemanticAnalyzer import SemanticAnalyzer
 from src.Source import Source
+from src.Token import Characters
 
 if __name__ == "__main__":
     # sys.stdin = io.StringIO(
@@ -28,7 +30,7 @@ if __name__ == "__main__":
         #     "print(i);"
 
         #  "var a = 5.0;"
-        "var i = 4.0;"
+       # "var i = 4.0;"
         # "def var name1(var a,  var b) {"
         #      "i = i - 1;"
         #      "if( i > 0) "
@@ -46,12 +48,13 @@ if __name__ == "__main__":
         #    "name1(a, b);"
         #  "   var luz2 = 2;"
         # #      "var luz3 = i + luz;"
-        #
-        "while ( i > 0) "
-        "{"
-        " i = i - 1 ;"
-        "print(i);"
-        "}"
+     #    #
+     #    "while ( i > 0) "
+     #    "{"
+     #    " i = i - 1 ;"
+     #    "print(i);"
+     # "}"
+       # "print(\"dkckk\");"
 
         # " var i = 3 + (1 * 2);"
         # "if( 4 ==   4 | 4 == 5){"
@@ -59,9 +62,19 @@ if __name__ == "__main__":
         #         "print(i);"
         # # "}"
         # "}"
+        "EUR i = 4.0;"
+        "def PLN sum(EUR eur){"
+        
+        #" eur = 5.0;"
+        "return eur;"
+        "}"
+        "PLN num ;"
+        "PLN pln = sum(i);"
+        "GBP gbp = sum(i);"
+        
+        "print(pln);"
 
-        # "def var sum(var a, var b){ return sum(a, b) + sum "
-        #    # "}"
+        # "def var sum(var a, var b){ return sum(a, b) "}"
         # #  "   return luz3;"
         #  "}"
         #     "return 5;"
@@ -83,7 +96,7 @@ if __name__ == "__main__":
         #        "return i;"
         #        "} "
         #         "name2();"
-        # "var i = 5;"
+       # "GBP i = 5.0;"
         # "while ( i<10){"
         # "i = i + 1;"
 
@@ -145,6 +158,7 @@ if __name__ == "__main__":
         # "print(\"\");"
 
     )
+
     source = Source()
     lexer = Lexer(source)
     parser = Parser(source, lexer)

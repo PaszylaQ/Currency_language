@@ -9,7 +9,8 @@ from src.ast.returnStatement import ReturnStatement
 from src.ast.variable import Variable
 from src.ast.whileStatement import WhileStatement
 
-
+characters = Characters()
+currencies = characters.currencyTypesToList()
 class SemanticAnalyzer(NodeVisitor):
     def __init__(self, tree):
         self.executionScope = ExecutionScope(Scope([], []), Scope([], []))
@@ -46,14 +47,28 @@ class SemanticAnalyzer(NodeVisitor):
             )
 
     def visitExpression(self, node):
+
         type1 = self.visit(node.leftOperand)
         # print(f"[visitExpression: {type1}]")
 
         type2 = self.visit(node.rightOperand) if node.rightOperand else None
-
+        multiplicativeOperators = [TokenType.MULTIPLY, TokenType.DIVIDE]
+        additiveOperators = [TokenType.PLUS, TokenType.MINUS]
         # print(f"[visitExpression: {type2 }]")
-        if type2 is None or type1 == type2:  # sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
+        if type1 in currencies and type2 == TokenType.VAR_KW  and node.operation in multiplicativeOperators:
+            return TokenType.EUR_KW
+        elif   type2 in currencies and type2 == TokenType.VAR_KW and node.operation in multiplicativeOperators:
+            return TokenType.EUR_KW
+        elif type1 in currencies and type2 in currencies and node.operation in additiveOperators:
+            return TokenType.EUR_KW
+        elif type2 is None or type1 == type2 and type1 not in currencies:  # sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
             return type1
+        elif type2 is None or type1 == type2 and type1  in currencies:
+            return TokenType.EUR_KW
+        elif type1 in currencies and type2 in currencies and node.operation in multiplicativeOperators:
+            raise SemanticError(
+                "proba mnożenia lub dzielenia walut - niedozwolone"
+            )
         else:
             raise SemanticError(
                 "rozne typy w wyrazeniu"
@@ -81,7 +96,6 @@ class SemanticAnalyzer(NodeVisitor):
         else:
             # print(self.executionScope.parentScope)
             # print(self.executionScope.currentScope)
-            print(node.name)
             raise SemanticError(
                 "zmienna nie jest zadeklarowana"
             )
@@ -92,7 +106,6 @@ class SemanticAnalyzer(NodeVisitor):
 
             if node.value is not None:
                 valueType = self.visit(node.value)  # sprawdzanie typu wyrazenie przypisywanego
-                # print(list(Characters.currencies.values()))
                 if valueType == TokenType.VAR_KW or valueType in Characters.currencies.values():
                     self.executionScope.pushVariable(node)
                 else:
@@ -127,11 +140,13 @@ class SemanticAnalyzer(NodeVisitor):
             )
 
     def visitAssignement(self, node):
+
         type1 = self.visit(node.name)
         type2 = self.visit(node.expression)
 
-        if type1 == type2:  # sprawdzanie zgodnosci typow
+        if type1 == type2 or (type1 in currencies and type2 in currencies):   # sprawdzanie zgodnosci typow
             return type1
+
         else:
             raise SemanticError(
                 "rozne typy w wyrazeniu"
@@ -144,10 +159,7 @@ class SemanticAnalyzer(NodeVisitor):
             argType = self.visit(arg)
             arguments.append(Variable(argType, ""))
         # jesli przypisujemy to co zwraca funkcja to zwracamy typ return statementu
-        # print(arguments)
-        # print(node.args)
-        print(self.executionScope.parentScope)
-        print(self.executionScope.currentScope)
+
         searchedDesiredFunction = Func(None, node.functionId, arguments)
         func = self.executionScope.lookupAndReturnFunction(searchedDesiredFunction)
         if func is not None:
@@ -179,7 +191,8 @@ class SemanticAnalyzer(NodeVisitor):
                 self.executionScope.pushVariables(node.arguments)
 
                 returnType = self.visit(node.body)
-                if returnType != node.funcType:
+
+                if returnType != node.funcType and not (returnType == TokenType.EUR_KW and node.funcType in currencies):
                     raise SemanticError(
                         "returnType nie jest zgodny z typem funkcji"
                     )
