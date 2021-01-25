@@ -62,17 +62,20 @@ if __name__ == "__main__":
         #         "print(i);"
         # # "}"
         # "}"
-        "EUR i = 4.0;"
-        "def PLN sum(EUR eur){"
-        
+        #  "EUR i = 4.0;"
+        # "def PLN sum(EUR eur){"
+
         #" eur = 5.0;"
-        "return eur;"
-        "}"
-        "PLN num ;"
-        "PLN pln = sum(i);"
-        "GBP gbp = sum(i);"
-        
-        "print(pln);"
+        # "return eur;"
+        # "}"
+        # "PLN num ;"
+        # "PLN pln = sum(i);"
+        # "GBP gbp = sum(i);"
+        # "var i = 5.0 ;"
+        # " var j = 4.0 ;"
+        "var k = (1 / 2 ) / 3;"
+         "print(k);"
+
 
         # "def var sum(var a, var b){ return sum(a, b) "}"
         # #  "   return luz3;"
@@ -165,8 +168,8 @@ if __name__ == "__main__":
     functions = parser.parse()
     # visitor  = getattr(functions[0], 'var_type' )
     # print(visitor)
-    # for function in functions:
-    #     print(function)
+    for function in functions:
+        print(function)
     analyzer = SemanticAnalyzer(functions)
     analyzer.analyze()
     # print(functions)

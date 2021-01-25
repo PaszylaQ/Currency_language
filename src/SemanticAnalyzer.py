@@ -32,7 +32,8 @@ class SemanticAnalyzer(NodeVisitor):
     def visitVariable(self, node):
         if self.executionScope.lookupVariable(node, True) is False:
             if node.value is not None:
-                valueType = self.visit(node.value)  # sprawdzanie typu wyrazenie przypisywanego
+                valueType = self.visit(node.value)
+                # sprawdzanie typu wyrazenie przypisywanego
                 if valueType == node.getType():
                     self.executionScope.pushVariable(node)
                 else:
@@ -61,7 +62,7 @@ class SemanticAnalyzer(NodeVisitor):
             return TokenType.EUR_KW
         elif type1 in currencies and type2 in currencies and node.operation in additiveOperators:
             return TokenType.EUR_KW
-        elif type2 is None or type1 == type2 and type1 not in currencies:  # sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
+        elif type2 is None or type1 == type2 and type1 not in currencies:# sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
             return type1
         elif type2 is None or type1 == type2 and type1  in currencies:
             return TokenType.EUR_KW

@@ -63,7 +63,7 @@ class ExecutionScope():
 
     def lookupVariableAndReturnVar(self, variableName, currentScopeOnly=False):
 
-        for var in self.currentScope.variables:
+        for var in reversed(self.currentScope.variables):
             if var.varId == variableName:
                 lookupVar = var
                 return lookupVar  # sprawdzanie najepirw current a potem parent scope w przypadku nieodnalezienia

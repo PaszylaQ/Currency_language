@@ -290,13 +290,15 @@ class Parser():
         elif self.currentToken.getType() == TokenType.LEFTPARENTHESIS:
             self.consume()
             expression = self.parseExpression()
+            print(expression)
             if self.currentToken.getType() != TokenType.RIGHTPRAENTHESIS:
                 raise InvalidSyntax
             else:
                 self.consume()
                 return expression
-        # elif self.currentToken.getType() in tokens:
-        #     self.consume()
+        elif self.currentToken.getType() in tokens:
+            self.consume()
+            self.parseExpression()
 
     def parseNameOrFunCall(self):
         name = self.currentToken.getValue()

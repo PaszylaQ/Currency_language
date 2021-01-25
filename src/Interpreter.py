@@ -100,8 +100,7 @@ class Interpreter(NodeVisitor):
             self.executionScope.pushVariable(node)
 
     def visitValue(self, node, exchangeRate = None):
-
-        return float(node.value)/exchangeRate if exchangeRate else float(node.value)
+        return float(node.value)/exchangeRate if exchangeRate is not None else float(node.value)
 
     def visitAssignement(self, node, exchangeRate = None):
         expressionValue = self.visit(node.expression)
@@ -116,8 +115,12 @@ class Interpreter(NodeVisitor):
             variable = self.visit(temp.value) * exchangeRate
             variable = f"{variable} {currencyName}"
             print(variable)
+
+        elif isinstance(temp, Variable):
+            print(self.visit(temp.varId))
+
         else:
-            print(self.visit(temp))
+            print(self.visit(node))
 
     def visitNoneType(self, exchangeRate = None):
         raise RuntimeError(
@@ -128,6 +131,7 @@ class Interpreter(NodeVisitor):
     def visitName(self, node, exchangeRate = None):
 
         variable = self.executionScope.lookupVariableAndReturnVar(node, False)
+        #print(variable)
         return self.visit(variable.value)
 
     def visitWhileStatement(self,
@@ -210,4 +214,5 @@ class Interpreter(NodeVisitor):
                     "dzielenie przez 0"
                 )
             else:
+                print(value1, value2)
                 return value1 / value2
