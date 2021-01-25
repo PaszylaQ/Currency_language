@@ -111,7 +111,6 @@ class Parser():
         variableTypes = [TokenType.VAR_KW]
 
         variableTypes = variableTypes + currencies
-
         if currentTokenType == TokenType.NAME:
             statement = self.parseAssignementOrFuncCall()
         elif currentTokenType == TokenType.PRINT_KW:
@@ -121,6 +120,7 @@ class Parser():
         elif self.currentToken.getType() == TokenType.RETURN_KW:
             statement = self.parseReturnStatement()
         else:
+            print(self.currentToken, self.currentToken.getType())
             raise InvalidSyntax
 
         return self.parseSemicolon(statement)

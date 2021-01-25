@@ -24,6 +24,7 @@ class Source:
         return self.stream.read(1)
 
     def nextChar(self):
+
         self.currentChar = self.readCharacter()
         if self.currentChar == '#':
             while self.currentChar != '\n' and self.currentChar != "":

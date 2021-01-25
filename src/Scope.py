@@ -7,12 +7,18 @@ class Scope():
         self.functions = functions
 
     def __repr__(self):
-        return f"[Scope: {self.getVarIds(self.variables)} '\n', {self.getFuncIds(self.functions)}]"
+        return f"[Scope: {self.getVarIds(self.variables)}  {self.getVarValue(self.variables)}'\n' {self.getFuncIds(self.functions)}]"
 
     def getVarIds(self, variables):
         vars = []
         for variable in variables:
             vars.append(variable.varId)
+        return vars
+
+    def getVarValue(self, variables):
+        vars = []
+        for variable in variables:
+            vars.append(variable.value)
         return vars
 
     def getFuncIds(self, functions):

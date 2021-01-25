@@ -53,16 +53,21 @@ class SemanticAnalyzer(NodeVisitor):
         # print(f"[visitExpression: {type1}]")
 
         type2 = self.visit(node.rightOperand) if node.rightOperand else None
+
         multiplicativeOperators = [TokenType.MULTIPLY, TokenType.DIVIDE]
         additiveOperators = [TokenType.PLUS, TokenType.MINUS]
+        booleanOperators = [TokenType.LESSOREQUAL, TokenType.LESS, TokenType.GREATEROREQUAL, TokenType.GREATER, TokenType.EQUALS, TokenType.NOTEQUAL]
         # print(f"[visitExpression: {type2 }]")
+        acceptedOperators = additiveOperators + booleanOperators
 
         if type1 in currencies and type2 == TokenType.VAR_KW  and node.operation in multiplicativeOperators:
             return TokenType.EUR_KW
         elif   type2 in currencies and type1 == TokenType.VAR_KW and node.operation in multiplicativeOperators:
             return TokenType.EUR_KW
-        elif type1 in currencies and type2 in currencies and node.operation in additiveOperators:
+        elif type1 in currencies and type2 in currencies and node.operation in additiveOperators :
             return TokenType.EUR_KW
+        elif type1 in currencies and type2 in currencies and node.operation.tokenType in booleanOperators:
+            return True;
         elif type2 is None or type1 == type2 and type1 not in currencies:# sprawdzanie zgodnosci typow, jesli drugi typ to None zwracany jest pierwszy
             return type1
         elif type2 is None or type1 == type2 and type1  in currencies:
@@ -95,11 +100,13 @@ class SemanticAnalyzer(NodeVisitor):
         if variable is not None:
             # print(f"[visitName: {variable.getType()}, {variable.varType}]")
             return variable.getType()
+
         else:
             # print(self.executionScope.parentScope)
             # print(self.executionScope.currentScope)
             raise SemanticError(
-                "zmienna nie jest zadeklarowana"
+                "zmienna nie jest zadeklarowana \n"
+                f"{node.name}"
             )
 
     def visitCurrency(self, node):
@@ -113,6 +120,7 @@ class SemanticAnalyzer(NodeVisitor):
                 else:
                     raise SemanticError(
                         "przypisanie zlego typu"
+
                     )
 
             else:
@@ -161,7 +169,6 @@ class SemanticAnalyzer(NodeVisitor):
             argType = self.visit(arg)
             arguments.append(Variable(argType, ""))
         # jesli przypisujemy to co zwraca funkcja to zwracamy typ return statementu
-
         searchedDesiredFunction = Func(None, node.functionId, arguments)
         func = self.executionScope.lookupAndReturnFunction(searchedDesiredFunction)
         if func is not None:
@@ -266,6 +273,7 @@ class SemanticAnalyzer(NodeVisitor):
         return returnType
 
     def visitBooleanExpr(self, node):
+
         self.visit(Expression(node.lValue, node.operator, node.rValue))
 
     def visitIfStatement(self, node):

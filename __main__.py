@@ -245,18 +245,21 @@ if __name__ == "__main__":
 #         "}"
 #     "print(sum);"
 # ))
-    source = Source(sys.stdin)
-    lexer = Lexer(source)
-    parser = Parser(source, lexer)
-    functions = parser.parse()
+    fileName = sys.argv[1]
+    with open(fileName, 'r') as f:
 
-    analyzer = SemanticAnalyzer(functions)
-    analyzer.analyze()
-    interpreter = Interpreter(functions, analyzer)
-    interpreter.interpret()
+        source = Source(f)
+        lexer = Lexer(source)
+        parser = Parser(source, lexer)
+        functions = parser.parse()
+
+        analyzer = SemanticAnalyzer(functions)
+        analyzer.analyze()
+        interpreter = Interpreter(functions, analyzer)
+        interpreter.interpret()
     # visitor  = getattr(functions[0], 'var_type' )
     # print(visitor)
-    # for function in functions:
-    #     print(function)
+    #     for function in functions:
+    #         print(function)
     # while if condition
     #

@@ -1,21 +1,21 @@
-    def USD savingsInUsdCurrency(PLN currency1, EUR currency2, USD currency3)
+def USD savingsInUsdCurrency( PLN currency1 , EUR currency2 , USD currency3 )
     {
     USD savings = 0 ;
     savings = currency1 + currency2  ;
     savings = savings + currency3 ;
-    return savings;
+    return savings ;
     }
-   PLN złote = 200.0 ;
-   EUR euro = 10.0 ;
-   USD dolary = 342.0 ;
-   CZK mySavings = savingsInUsdCurrency(złote, euro, dolary) ;
-   print(mySavings) ;
-
-    EUR mySavings2 =  mySavings * 2;
-    print(mySavings2);
+PLN złote = 200.0 ;
+EUR euro = 10.0 ;
+USD dolary = 342.0 ;
+CZK mySavings = savingsInUsdCurrency(złote, euro, dolary) ;
+PLN pln = 10.0;
+print(mySavings) ;
+PLN mySavings2 =  pln * 2;
+print(mySavings2);
 
     def var fib(var n){
-    if (n == 1 | n == 2)	
+    if (n == 1 | n == 2)
     {
 
 
@@ -27,12 +27,6 @@
     }
     return 0;
     }
-    var sum = 0 ;
-   var iter = 0 ;
-    var param = 1;
-  while ( iter < 30 )
-        {
-          sum = sum + fib(param);
-            iter = iter + 1;
-        }
-   	print(sum);
+    var param = 1.0 ;
+
+print( param );
