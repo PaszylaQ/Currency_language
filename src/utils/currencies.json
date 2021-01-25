@@ -1,0 +1,27 @@
+{
+  "currencies":[
+    "EUR",
+    "PLN",
+    "CHF",
+    "JPY",
+    "GBP",
+    "USD",
+    "RUB",
+    "CZK",
+    "AUD"
+  ],
+  "exchange":{
+    "EUR": 1,
+    "PLN":4.54,
+    "GBP":0.89,
+    "CHF":1.08,
+    "JPY": 126.32,
+    "USD": 1.22,
+    "RUB": 91.68,
+    "CZK": 26.12,
+    "AUD": 1.58
+  }
+}
+
+
+
