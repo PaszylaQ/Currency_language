@@ -198,6 +198,7 @@ class Interpreter(NodeVisitor):
         # print(f"[visitExpression: {type1}]")
         value1 = self.visit(node.leftOperand, exchangeRate)
         # print(value1)
+
         value2 = self.visit(node.rightOperand, exchangeRate) if node.rightOperand else None
 
         if value2 == None:
@@ -214,5 +215,4 @@ class Interpreter(NodeVisitor):
                     "dzielenie przez 0"
                 )
             else:
-                print(value1, value2)
                 return value1 / value2

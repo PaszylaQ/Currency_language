@@ -23,7 +23,7 @@ if __name__ == "__main__":
     #
     #     "print(sum);"
     # )
-    sys.stdin = io.StringIO(
+
         #  "PLN wartosc = 8.9;"
 
         #    "i = 16 + 2;"
@@ -73,8 +73,8 @@ if __name__ == "__main__":
         # "GBP gbp = sum(i);"
         # "var i = 5.0 ;"
         # " var j = 4.0 ;"
-        "var k = (1 / 2 ) / 3;"
-         "print(k);"
+        # "var k = (1 / 2 ) / 3;"
+        #  "print(k);"
 
 
         # "def var sum(var a, var b){ return sum(a, b) "}"
@@ -160,21 +160,103 @@ if __name__ == "__main__":
         #  "print(savings2);"
         # "print(\"\");"
 
-    )
+    #sys.stdin = io.StringIO()
 
-    source = Source()
+  #   "def USD savingsInUsdCurrency(PLN currency1, EUR currency2, USD currency3)"
+  #   "{"
+  #   "USD savings = 0 ;"
+  #   "savings = currency1 + currency2  ;"
+  #   "savings = savings + currency3 ;"
+  #   "return savings;"
+  #   "}"
+  #  "PLN złote = 200.0 ;"
+  #  "EUR euro = 10.0 ;"
+  #  "USD dolary = 342.0 ;"
+  #  "CZK mySavings = savingsInUsdCurrency(złote, euro, dolary) ;"
+  #  "print(mySavings) ;"
+  #   "EUR mySavings = 1.0 ;"
+  #   "EUR mySavings2 =  mySavings * 2;"
+  #   "print(mySavings2);"
+  #
+  #   "def var fib(var n){"
+  #   "if (n == 1 | n == 2)"
+  #  " {"
+  #
+  #
+  #       "return 1 ;"
+  #   "}"
+  #   "else"
+  #   "{"
+  #       "return  fib(n - 1) + fib(n - 2);"
+  #   "}"
+  #   "return 0;"
+  #   "}"
+  #  " var sum = 0 ;"
+  #  " var iter = 0 ;"
+  #   "var param = 1;"
+  # " while ( iter < 30 )"
+  #      " {"
+  #         "sum = sum + fib(param);"
+  #          " iter = iter + 1;"
+  #       "}"
+  #   "print(sum);"
+  #
+  #       "def var func()"
+  #       " {"
+  #           "var i = 4 ;"
+  #       " return i ;"
+  #       " }"
+#     source = Source(io.StringIO(     "def USD savingsInUsdCurrency(PLN currency1, EUR currency2, USD currency3)"
+#     "{"
+#     "USD savings = 0 ;"
+#     "savings = currency1 + currency2  ;"
+#     "savings = savings + currency3 ;"
+#     "return savings;"
+#     "}"
+#    "PLN złote = 200.0 ;"
+#    "EUR euro = 10.0 ;"
+#    "USD dolary = 342.0 ;"
+#    "CZK mySavings = savingsInUsdCurrency(złote, euro, dolary) ;"
+#    "print(mySavings) ;"
+#
+#     "EUR mySavings2 =  mySavings * 2;"
+#     "print(mySavings2);"
+#
+#     "def var fib(var n){"
+#     "if (n == 1 | n == 2)"
+#    " {"
+#
+#
+#         "return 1 ;"
+#     "}"
+#     "else"
+#     "{"
+#         "return  fib(n - 1) + fib(n - 2);"
+#     "}"
+#     "return 0;"
+#     "}"
+#    " var sum = 0 ;"
+#    " var iter = 0 ;"
+#     "var param = 1;"
+#   " while ( iter < 30 )"
+#        " {"
+#           "sum = sum + fib(param);"
+#            " iter = iter + 1;"
+#         "}"
+#     "print(sum);"
+# ))
+    source = Source(sys.stdin)
     lexer = Lexer(source)
     parser = Parser(source, lexer)
     functions = parser.parse()
-    # visitor  = getattr(functions[0], 'var_type' )
-    # print(visitor)
-    for function in functions:
-        print(function)
+
     analyzer = SemanticAnalyzer(functions)
     analyzer.analyze()
-    # print(functions)
     interpreter = Interpreter(functions, analyzer)
     interpreter.interpret()
-
+    # visitor  = getattr(functions[0], 'var_type' )
+    # print(visitor)
+    # for function in functions:
+    #     print(function)
     # while if condition
     #

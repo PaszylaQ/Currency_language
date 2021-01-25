@@ -56,9 +56,10 @@ class SemanticAnalyzer(NodeVisitor):
         multiplicativeOperators = [TokenType.MULTIPLY, TokenType.DIVIDE]
         additiveOperators = [TokenType.PLUS, TokenType.MINUS]
         # print(f"[visitExpression: {type2 }]")
+
         if type1 in currencies and type2 == TokenType.VAR_KW  and node.operation in multiplicativeOperators:
             return TokenType.EUR_KW
-        elif   type2 in currencies and type2 == TokenType.VAR_KW and node.operation in multiplicativeOperators:
+        elif   type2 in currencies and type1 == TokenType.VAR_KW and node.operation in multiplicativeOperators:
             return TokenType.EUR_KW
         elif type1 in currencies and type2 in currencies and node.operation in additiveOperators:
             return TokenType.EUR_KW
@@ -223,17 +224,19 @@ class SemanticAnalyzer(NodeVisitor):
 
             else:
                 self.visit(node)
-
+        #print(blockReturnStatementTypes)
         # sprawdzenie czy typ zwracany z blokow w funkcji w przypadku jego zwracanai pokrywa się z returnem w funkcji
         if len(set(returnStatementTypes)) == 1:
             returnStatementTypes.append(None)
             if len(set(blockReturnStatementTypes) - set(returnStatementTypes)) == 0:
                 return returnStatementTypes[0]
+
             else:
                 raise SemanticError(
                     "typ zwracany przez funkcje jest rozny od typu zwracanego przez blok"
                 )
         elif len(set(returnStatementTypes)) == 0:
+
             returnStatementTypes.append(None)
             if len(set(blockReturnStatementTypes) - set(returnStatementTypes)) == 0:
                 return None

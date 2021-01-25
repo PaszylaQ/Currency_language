@@ -290,7 +290,6 @@ class Parser():
         elif self.currentToken.getType() == TokenType.LEFTPARENTHESIS:
             self.consume()
             expression = self.parseExpression()
-            print(expression)
             if self.currentToken.getType() != TokenType.RIGHTPRAENTHESIS:
                 raise InvalidSyntax
             else:

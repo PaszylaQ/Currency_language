@@ -2,10 +2,11 @@ import sys
 
 
 class Source:
-    def __init__(self):
+    def __init__(self, stream):
 
         self.positionInline = 0
         self.lineNumber = 1
+        self.stream = stream
         self.currentChar = self.nextChar()
 
 
@@ -20,7 +21,7 @@ class Source:
         return self.currentChar
 
     def readCharacter(self):
-        return sys.stdin.read(1)
+        return self.stream.read(1)
 
     def nextChar(self):
         self.currentChar = self.readCharacter()
